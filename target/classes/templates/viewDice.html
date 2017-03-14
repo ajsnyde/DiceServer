@@ -1,0 +1,99 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<link rel="stylesheet"
+	href="https://maxcdn.bootstrapcdn.com/bootswatch/3.3.7/cyborg/bootstrap.min.css"></link>
+</head>
+<body>
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12" >
+                    <div id="editor">
+                        <p id="coordinates">LOADING...</p>
+                        <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+                        <script type="text/javascript">
+                            $(document).ready(function(){
+                                $("body").mousemove(function(event){
+                                document.getElementById("coordinates").innerHTML="Your mouse is at: ("+ event.pageX +"," + event.pageY+")";
+                                });
+                            });
+                        </script>
+                        <script src="http://code.jquery.com/jquery-3.1.1.min.js"></script>
+    					<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+                        <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/84/three.js"></script>
+                        <script th:inline="javascript">
+                            var camera, scene, renderer;
+                            var mesh;
+                            init();
+                            animate();
+                            function init() {
+                            	var mouseDown = 0;
+                            	var mouseDownX = 0;
+                        	    var mouseDownY = 0;
+                            	document.body.onmousedown = function() { 
+                            	    mouseDown = 1;
+                            	    mouseDownX = 0;
+                            	    mouseDownY = 0;
+                            	}
+                            	document.body.onmouseup = function() {
+                            	    mouseDown = 0;
+                            	}
+                            	THREE.ImageUtils.crossOrigin = '';
+                                width = 600;
+                                height = 600;
+                                camera = new THREE.PerspectiveCamera( 50, width / height, 1, 1000 );
+                                camera.position.z = 400;
+                                scene = new THREE.Scene();
+                                document.getElementById("coordinates").innerHTML="Image used is: "+ /*[[${filename}]]*/;
+                                baseName = "" + /*[[${baseName}]]*/;
+
+                               var materials = [];
+                               /*<![CDATA[*/
+                               for(count = 1; count < 7; count++){
+                                   materials.push(new THREE.MeshBasicMaterial({
+                                       map: THREE.ImageUtils.loadTexture( "http://localhost:8080/files2/" + baseName + count + ".bmp")
+                                   }))
+                                }
+                               /*]]>*/
+                                dice = new THREE.Mesh(
+                                    new THREE.BoxGeometry( 200, 200, 200 ),
+                                    new THREE.MultiMaterial( materials ) );
+                                scene.add( dice );
+
+                                renderer = new THREE.WebGLRenderer();
+                                renderer.setPixelRatio( window.devicePixelRatio );
+                                renderer.setSize( width, height );
+                                document.getElementById("editor").appendChild( renderer.domElement );
+                                //
+                                window.addEventListener( 'resize', onWindowResize, false );
+                                $("canvas").mousemove(function(e) {
+                                	if(mouseDown == 1){
+                                    	dice.rotation.x += (e.pageX-mouseDownX)/100;
+                                    	mouseDownX = e.pageX;
+                                    	dice.rotation.y += (e.pageY-mouseDownY)/100;
+                                    	mouseDownY = e.pageY;
+                                	}
+                                })
+                            }
+                            function onWindowResize() {
+                                camera.aspect = width / height;
+                                camera.updateProjectionMatrix();
+                                renderer.setSize( width, height );
+                            }
+                            function animate() {
+                                requestAnimationFrame( animate );
+                                renderer.render( scene, camera );
+                            }
+                            $(document).ready(function() {
+                              $('img').click(function(e) {
+                                var offset = $(this).offset();
+                                alert((e.pageX - offset.left) + "," + (e.pageY - offset.top));
+                              });
+                            });
+                        </script>
+                    </div>
+                </div>
+                <img class="img" th:src="@{'/files2/'+${filename}}" alt=""/>
+            </div>
+        </div>
+    </body>
+</html>
