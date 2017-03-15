@@ -7,6 +7,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
@@ -15,7 +16,8 @@ import javax.persistence.Transient;
 public class DieFace {
   @Transient
   public Image face;
-
+  @Lob
+  public byte[] faceBytes;
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
   public long id;
@@ -24,15 +26,26 @@ public class DieFace {
   }
 
   public DieFace(Image face) {
-    this.face = face;
+    setFace(face);
   }
 
   @Column(name = "face", nullable = true)
-  public byte[] getFace() {
-    return Utils.ImageToByteArray(face);
+  public Image getFace() {
+    return face;
   }
 
-  public void setFace(byte[] face) {
-    this.face = Utils.ByteArrayToImage(face);
+  public void setFace(Image face) {
+    this.face = face;
+    this.faceBytes = Utils.ImageToByteArray(face);
+  }
+
+  @Column(name = "faceBytes", nullable = true)
+  public byte[] getFaceBytes() {
+    return faceBytes;
+  }
+
+  public void setFaceBytes(byte[] faceBytes) {
+    this.faceBytes = faceBytes;
+    face = Utils.ByteArrayToImage(faceBytes);
   }
 }

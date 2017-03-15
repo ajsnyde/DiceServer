@@ -43,6 +43,12 @@ public class Utils {
     return imageInByte;
   }
 
+  public static BufferedImage ImageToBufferedImage(Image image) {
+    ImagePlus imageplus = new ImagePlus();
+    imageplus.setImage(image);
+    return imageplus.getBufferedImage();
+  }
+
   public static Image ByteArrayToImage(byte[] image) {
     BufferedImage img = null;
     try {

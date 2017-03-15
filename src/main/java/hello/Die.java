@@ -12,6 +12,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
@@ -27,9 +28,14 @@ public class Die {
   public List<DieFace> faces = new ArrayList<DieFace>();
   @Transient
   public Image map; // initial map file
+  @Lob
+  public byte[] mapBytes;
+
   public int square = 200;
 
   private Die() {
+    if (mapBytes != null)
+      map = Utils.ByteArrayToImage(mapBytes);
   }
 
   public Die(Image map) {
@@ -42,12 +48,26 @@ public class Die {
     faces.add(new DieFace(Utils.cut(map, square, 3 * square, square, square)));
   }
 
-  @Column(name = "map", nullable = true)
   public byte[] getMap() {
-    return Utils.ImageToByteArray(map);
+    return mapBytes;
   }
 
   public void setMap(byte[] map) {
     this.map = Utils.ByteArrayToImage(map);
+  }
+
+  public void setMap(Image map) {
+    this.map = map;
+    mapBytes = Utils.ImageToByteArray(map);
+  }
+
+  @Column(name = "mapBytes", nullable = true)
+  public byte[] getMapBytes() {
+    return mapBytes;
+  }
+
+  public void setMapBytes(byte[] mapBytes) {
+    this.mapBytes = mapBytes;
+    map = Utils.ByteArrayToImage(mapBytes);
   }
 }
