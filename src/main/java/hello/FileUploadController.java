@@ -33,10 +33,8 @@ public class FileUploadController {
 
   @GetMapping("/")
   public String listUploadedFiles(Model model) throws IOException {
-
     model.addAttribute("files", storageService.loadAll().map(path -> MvcUriComponentsBuilder.fromMethodName(FileUploadController.class, "serveFile", path.getFileName().toString()).build().toString())
         .collect(Collectors.toList()));
-
     return "uploadForm";
   }
 
@@ -45,6 +43,12 @@ public class FileUploadController {
   public ResponseEntity<Resource> serveFile(@PathVariable String filename) {
     Resource file = storageService.loadAsResource(filename);
     return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + file.getFilename() + "\"").body(file);
+  }
+
+  @GetMapping("/viewDie/{id:.+}")
+  public String showDice(@PathVariable String id, Model model) {
+    model.addAttribute("id", id);
+    return "viewDice";
   }
 
   @GetMapping("/die/{id:.+}/map")
@@ -63,19 +67,19 @@ public class FileUploadController {
     return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + file.getFilename() + "\"").body(file);
   }
 
-  @GetMapping("/die/{die:.+}/face/{face:.+}/face")
+  @GetMapping("/die/{id:.+}/face/{faceId:.+}/face")
   @ResponseBody
-  public ResponseEntity<Resource> serveFace(@PathVariable long face) {
-    DieFace die = Application.dieFaceRepo.findOne(face);
-    System.out.println(die.getFace());
-    File map = new File(die.id + ".bmp");
+  public ResponseEntity<Resource> serveFace(@PathVariable long id, @PathVariable long faceId) {
+    Die die = Application.dieRepo.findOne(id);
+    DieFace face = die.faces.get((int) faceId);
+    File map = new File(die.id + "-" + face.id + ".bmp");
     try {
-      ImageIO.write(Utils.ImageToBufferedImage(Utils.ByteArrayToImage(die.getFaceBytes())), "BMP", map);
+      ImageIO.write(Utils.ImageToBufferedImage(Utils.ByteArrayToImage(face.getFaceBytes())), "BMP", map);
     } catch (IOException e) {
       e.printStackTrace();
     }
     storageService.store(map);
-    Resource file = storageService.loadAsResource(die.id + ".bmp");
+    Resource file = storageService.loadAsResource(die.id + "-" + face.id + ".bmp");
     return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + file.getFilename() + "\"").body(file);
   }
 
@@ -109,7 +113,7 @@ public class FileUploadController {
     } catch (InterruptedException e) {
       e.printStackTrace();
     }
-    return "redirect:/die/" + die.id;
+    return "redirect:/viewDie/" + die.id;
   }
 
   @ExceptionHandler(StorageFileNotFoundException.class)
