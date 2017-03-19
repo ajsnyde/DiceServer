@@ -27,7 +27,7 @@ public class Die {
   @ElementCollection(targetClass = DieFace.class)
   public List<DieFace> faces = new ArrayList<DieFace>();
   @Transient
-  public Image map; // initial map file
+  public Image map; // initial map file; should be tied to the mapBytes
   @Lob
   public byte[] mapBytes;
 

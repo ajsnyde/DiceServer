@@ -16,15 +16,17 @@ public class Application {
   StorageService storageService;
   public static DieRepo dieRepo;
   public static DieFaceRepo dieFaceRepo;
+  public static DieJobRepo dieJobRepo;
 
   public static void main(String[] args) {
     SpringApplication.run(Application.class, args);
   }
 
   @Bean
-  CommandLineRunner init(StorageService storageService, DieRepo repository, DieFaceRepo dfrepository) {
+  CommandLineRunner init(StorageService storageService, DieRepo repository, DieFaceRepo dfrepository, DieJobRepo djrepository) {
     dieRepo = repository;
     dieFaceRepo = dfrepository;
+    dieJobRepo = djrepository;
     this.storageService = storageService;
     return (args) -> {
       restartStorage();
@@ -36,6 +38,5 @@ public class Application {
     storageService.deleteAll();
     storageService.init();
     System.out.println("DELETING");
-
   }
 }

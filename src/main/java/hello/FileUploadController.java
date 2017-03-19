@@ -116,6 +116,11 @@ public class FileUploadController {
     return "redirect:/viewDie/" + die.id;
   }
 
+  @RequestMapping(value = "**", method = RequestMethod.GET)
+  public String getAnythingelse() {
+    return "redirect:/YOURMOTHER.html";
+  }
+
   @ExceptionHandler(StorageFileNotFoundException.class)
   public ResponseEntity handleStorageFileNotFound(StorageFileNotFoundException exc) {
     return ResponseEntity.notFound().build();
