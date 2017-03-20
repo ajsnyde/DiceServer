@@ -1,7 +1,13 @@
 package hello;
 
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
+
+import ij.ImagePlus;
 
 public class SimpleCompiler implements BatchCompilerStrategy {
 
@@ -26,7 +32,29 @@ public class SimpleCompiler implements BatchCompilerStrategy {
         batchDice.add(job.die);
       }
     }
+    batch.faces = getImages(new ArrayList<Die>(batch.dice));
+
     return batch;
   }
 
+  private ArrayList<Image> getImages(ArrayList<Die> dice) {
+    int rows = 20;
+    int cols = 20;
+    ArrayList<Image> images = new ArrayList<Image>();
+
+    BufferedImage b_img = new BufferedImage(Die.square * rows, Die.square * cols, 0);
+    Graphics2D graphics = b_img.createGraphics();
+    graphics.setPaint(new Color(255, 255, 255));
+    graphics.fillRect(0, 0, b_img.getWidth(), b_img.getHeight());
+
+    for (int k = 0; k < 6; k++) {
+      ImagePlus img = new ImagePlus("Side #" + k, b_img);
+      for (int i = 0; i < rows; ++i)
+        for (int j = 0; j < cols && ((i * rows) + j < dice.size()); ++j) {
+          Utils.paste(img.getImage(), dice.get((i * rows) + j).faces.get(k).getFace(), j * Die.square, i * Die.square);
+        }
+      images.add(img.getImage());
+    }
+    return images;
+  }
 }

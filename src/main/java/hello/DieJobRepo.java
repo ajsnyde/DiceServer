@@ -7,6 +7,6 @@ import org.springframework.data.repository.CrudRepository;
 
 public interface DieJobRepo extends CrudRepository<DieJob, Long> {
 
-  @Query("SELECT t FROM diejob t WHERE t.quantityLeft > 0")
+  @Query("SELECT d from DieJob d where d.quantityLeft > 0")
   public List<DieJob> findByCompletion();
 }

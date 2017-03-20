@@ -89,12 +89,6 @@ public class FileUploadController {
     return "id: " + Application.dieFaceRepo.findOne(face).id;
   }
 
-  @RequestMapping("/die/{die:.+}")
-  @ResponseBody
-  public String showDice(@PathVariable long die, Model model) {
-    return "id: " + Application.dieRepo.findOne(die).id;
-  }
-
   @PostMapping("/Upload")
   public String handleFileUpload(@RequestParam("file") MultipartFile file, RedirectAttributes redirectAttributes) {
     Die die = null;
@@ -116,9 +110,15 @@ public class FileUploadController {
     return "redirect:/viewDie/" + die.id;
   }
 
-  @RequestMapping(value = "**", method = RequestMethod.GET)
-  public String getAnythingelse() {
-    return "redirect:/YOURMOTHER.html";
+  @PostMapping("/Job")
+  public String handleFileUpload(@RequestParam("dieId") long dieId, @RequestParam("quantity") int quantity, RedirectAttributes redirectAttributes) {
+    Die die = Application.dieRepo.findOne(dieId);
+    if (die != null) {
+      DieJob job = new DieJob(die, quantity);
+      Application.dieJobRepo.save(job);
+    } else
+      throw new NullPointerException("Your die wasn't found!");
+    return "redirect:/viewDie/" + die.id;
   }
 
   @ExceptionHandler(StorageFileNotFoundException.class)

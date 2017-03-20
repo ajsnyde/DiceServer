@@ -26,6 +26,16 @@ public class Utils {
     return ip.getBufferedImage();
   }
 
+  // Pastes clipboard to image at the parametered coordinates. No resizing or checks
+  public static Image paste(Image image, Image clipboard, int x, int y) {
+    ImagePlus base = new ImagePlus("", image);
+    ImagePlus paste = new ImagePlus("", image);
+    ImageProcessor baseProcessor = base.getProcessor();
+    ImageProcessor pasteProcessor = paste.getProcessor();
+    baseProcessor.insert(pasteProcessor, x, y);
+    return baseProcessor.getBufferedImage();
+  }
+
   public static byte[] ImageToByteArray(Image image) {
     ImagePlus map = new ImagePlus("", image);
     BufferedImage originalImage = map.getBufferedImage();

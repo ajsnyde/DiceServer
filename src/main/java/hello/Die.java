@@ -2,6 +2,7 @@ package hello;
 
 import java.awt.Image;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -16,22 +17,24 @@ import javax.persistence.Lob;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import com.fasterxml.jackson.annotation.JsonView;
 
 @Entity
 @Table(name = "die")
 public class Die {
+  static Die blank = null;
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
+  @JsonView(Long.class)
   public long id;
   @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
   @ElementCollection(targetClass = DieFace.class)
   public List<DieFace> faces = new ArrayList<DieFace>();
   @Transient
-  public Image map; // initial map file; should be tied to the mapBytes
+  private Image map; // initial map file; should be tied to the mapBytes
   @Lob
-  public byte[] mapBytes;
-
-  public int square = 200;
+  private byte[] mapBytes;
+  public static int square = 200;
 
   private Die() {
     if (mapBytes != null)
@@ -69,5 +72,13 @@ public class Die {
   public void setMapBytes(byte[] mapBytes) {
     this.mapBytes = mapBytes;
     map = Utils.ByteArrayToImage(mapBytes);
+  }
+
+  public static Die getBlank() {
+    if (blank == null) {
+      blank = new Die();
+      blank.faces = new ArrayList<DieFace>(Collections.nCopies(6, DieFace.blank));
+    }
+    return blank;
   }
 }

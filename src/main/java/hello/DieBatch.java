@@ -1,5 +1,7 @@
 package hello;
 
+import java.awt.Image;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -21,4 +23,6 @@ public class DieBatch {
   @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
   @ElementCollection(targetClass = DieFace.class)
   public List<Die> dice;
+
+  public ArrayList<Image> faces; // 6 compilations of each face of each die - each to be printed
 }
