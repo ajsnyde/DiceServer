@@ -14,14 +14,18 @@ import javax.persistence.Lob;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 @Table(name = "dieface")
 public class DieFace {
   static DieFace blank = null;
 
   @Transient
+  @JsonIgnore
   private Image face;
   @Lob
+  @JsonIgnore
   private byte[] faceBytes;
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
@@ -36,22 +40,24 @@ public class DieFace {
 
   @Column(name = "face", nullable = true)
   public Image getFace() {
+    face = Utils.ByteArrayToImage(faceBytes);
     return face;
   }
 
   public void setFace(Image face) {
-    this.face = face;
     this.faceBytes = Utils.ImageToByteArray(face);
+    this.face = face;
+  }
+
+  public void setFaceBytes(byte[] faceBytes) {
+    face = Utils.ByteArrayToImage(faceBytes);
+    this.faceBytes = faceBytes;
+
   }
 
   @Column(name = "faceBytes", nullable = true)
   public byte[] getFaceBytes() {
     return faceBytes;
-  }
-
-  public void setFaceBytes(byte[] faceBytes) {
-    this.faceBytes = faceBytes;
-    face = Utils.ByteArrayToImage(faceBytes);
   }
 
   public static DieFace getBlank() {

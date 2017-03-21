@@ -30,19 +30,19 @@ public class SimpleCompiler implements BatchCompilerStrategy {
       // add dice from job until no more are required from the job or maxDice is hit
       for (; job.quantityLeft > 0 && numDice != maxDice; job.quantityLeft--) {
         batchDice.add(job.die);
+        Application.dieJobRepo.save(job);
       }
     }
     batch.faces = getImages(new ArrayList<Die>(batch.dice));
-
     return batch;
   }
 
   private ArrayList<Image> getImages(ArrayList<Die> dice) {
-    int rows = 20;
-    int cols = 20;
+    int rows = 5;
+    int cols = 5;
     ArrayList<Image> images = new ArrayList<Image>();
 
-    BufferedImage b_img = new BufferedImage(Die.square * rows, Die.square * cols, 0);
+    BufferedImage b_img = new BufferedImage(Die.square * rows, Die.square * cols, 1);
     Graphics2D graphics = b_img.createGraphics();
     graphics.setPaint(new Color(255, 255, 255));
     graphics.fillRect(0, 0, b_img.getWidth(), b_img.getHeight());
@@ -50,8 +50,8 @@ public class SimpleCompiler implements BatchCompilerStrategy {
     for (int k = 0; k < 6; k++) {
       ImagePlus img = new ImagePlus("Side #" + k, b_img);
       for (int i = 0; i < rows; ++i)
-        for (int j = 0; j < cols && ((i * rows) + j < dice.size()); ++j) {
-          Utils.paste(img.getImage(), dice.get((i * rows) + j).faces.get(k).getFace(), j * Die.square, i * Die.square);
+        for (int j = 0; j < cols && (((i * rows) + j) < dice.size()); ++j) {
+          img.setImage(Utils.paste(img.getImage(), dice.get((i * rows) + j).getFace(k).getFace(), j * Die.square, i * Die.square));
         }
       images.add(img.getImage());
     }

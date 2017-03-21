@@ -14,6 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBuilder;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.awt.Image;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -38,55 +39,65 @@ public class FileUploadController {
     return "uploadForm";
   }
 
-  @GetMapping("/files/{filename:.+}")
+  @GetMapping("/files/{filename}")
   @ResponseBody
   public ResponseEntity<Resource> serveFile(@PathVariable String filename) {
     Resource file = storageService.loadAsResource(filename);
     return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + file.getFilename() + "\"").body(file);
   }
 
-  @GetMapping("/viewDie/{id:.+}")
+  @GetMapping("/viewDie/{id}")
   public String showDice(@PathVariable String id, Model model) {
     model.addAttribute("id", id);
     return "viewDice";
   }
 
-  @GetMapping("/die/{id:.+}/map")
+  @GetMapping("/die/{id}/map")
   @ResponseBody
   public ResponseEntity<Resource> serveMap(@PathVariable long id) {
-    Die die = Application.dieRepo.findOne(id);
-    System.out.println(die.getMap());
-    File map = new File(die.id + ".bmp");
-    try {
-      ImageIO.write(Utils.ImageToBufferedImage(Utils.ByteArrayToImage(die.getMap())), "BMP", map);
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-    storageService.store(map);
-    Resource file = storageService.loadAsResource(die.id + ".bmp");
-    return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + file.getFilename() + "\"").body(file);
+    return serveBMP("die" + id, Application.dieRepo.findOne(id).getMap());
   }
 
-  @GetMapping("/die/{id:.+}/face/{faceId:.+}/face")
+  @GetMapping("/die/{id}/face/{faceId}/face")
   @ResponseBody
-  public ResponseEntity<Resource> serveFace(@PathVariable long id, @PathVariable long faceId) {
+  public ResponseEntity<Resource> serveFace(@PathVariable long id, @PathVariable int faceId) {
     Die die = Application.dieRepo.findOne(id);
-    DieFace face = die.faces.get((int) faceId);
-    File map = new File(die.id + "-" + face.id + ".bmp");
+    DieFace face = die.getFace(faceId);
+    return serveBMP("die" + id + "face" + faceId, face.getFace());
+  }
+
+  @GetMapping("/diebatch/{id}/face/{faceId}")
+  @ResponseBody
+  public ResponseEntity<Resource> serveDieBatchFace(@PathVariable long id, @PathVariable long faceId) {
+    DieBatch dieBatch = Application.dieBatchRepo.findOne(id);
+    return serveBMP("diebatch" + id + "face" + faceId, dieBatch.faces.get((int) faceId));
+  }
+
+  public ResponseEntity<Resource> serveBMP(String filename, Image image) {
+    File map = new File(filename + ".bmp");
     try {
-      ImageIO.write(Utils.ImageToBufferedImage(Utils.ByteArrayToImage(face.getFaceBytes())), "BMP", map);
+      ImageIO.write(Utils.ImageToBufferedImage(image), "BMP", map);
     } catch (IOException e) {
       e.printStackTrace();
     }
     storageService.store(map);
-    Resource file = storageService.loadAsResource(die.id + "-" + face.id + ".bmp");
+    Resource file = storageService.loadAsResource(filename + ".bmp");
     return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + file.getFilename() + "\"").body(file);
   }
 
-  @GetMapping("/die/{die:.+}/face/{face:.+}")
+  @GetMapping("/die/{die}/face/{face}")
   @ResponseBody
   public String serveImage(@PathVariable long die, @PathVariable long face) {
     return "id: " + Application.dieFaceRepo.findOne(face).id;
+  }
+
+  @GetMapping("/dieBatch")
+  @ResponseBody
+  public ResponseEntity<Resource> serveImage() {
+    DieBatch batch = new SimpleCompiler().compile();
+    // Application.dieBatchRepo.save(batch);
+    // Batch saving is broken due to duplicate Die objects
+    return serveBMP("dieBatch", batch.faces.get(1));
   }
 
   @PostMapping("/Upload")
@@ -97,7 +108,7 @@ public class FileUploadController {
       die.setMap(Files.readAllBytes(Utils.convert(file).toPath()));
       die.setMap(Utils.ByteArrayToImage(Files.readAllBytes(Utils.convert(file).toPath())));
       Application.dieRepo.save(die);
-      Application.dieFaceRepo.save(die.faces);
+      Application.dieFaceRepo.save(die.getFaces());
       System.out.println(die.getMapBytes().hashCode());
     } catch (IOException e1) {
       e1.printStackTrace();
@@ -119,6 +130,12 @@ public class FileUploadController {
     } else
       throw new NullPointerException("Your die wasn't found!");
     return "redirect:/viewDie/" + die.id;
+  }
+
+  @PostMapping("/pay")
+  public String pay() {
+
+    return "redirect:/viewDie/";
   }
 
   @ExceptionHandler(StorageFileNotFoundException.class)

@@ -28,12 +28,8 @@ public class Utils {
 
   // Pastes clipboard to image at the parametered coordinates. No resizing or checks
   public static Image paste(Image image, Image clipboard, int x, int y) {
-    ImagePlus base = new ImagePlus("", image);
-    ImagePlus paste = new ImagePlus("", image);
-    ImageProcessor baseProcessor = base.getProcessor();
-    ImageProcessor pasteProcessor = paste.getProcessor();
-    baseProcessor.insert(pasteProcessor, x, y);
-    return baseProcessor.getBufferedImage();
+    image.getGraphics().drawImage(clipboard, x, y, null);
+    return image;
   }
 
   public static byte[] ImageToByteArray(Image image) {
@@ -42,7 +38,7 @@ public class Utils {
     ByteArrayOutputStream baos = new ByteArrayOutputStream();
     byte[] imageInByte = null;
     try {
-      ImageIO.write(originalImage, "jpg", baos);
+      ImageIO.write(originalImage, "bmp", baos);
       baos.flush();
       imageInByte = baos.toByteArray();
       baos.close();
@@ -65,15 +61,6 @@ public class Utils {
       img = ImageIO.read(new ByteArrayInputStream(image));
     } catch (IOException e) {
       e.printStackTrace();
-    }
-    return img;
-  }
-
-  public static Image readImage(File file) {
-    BufferedImage img = null;
-    try {
-      img = ImageIO.read(new File("strawberry.jpg"));
-    } catch (IOException e) {
     }
     return img;
   }

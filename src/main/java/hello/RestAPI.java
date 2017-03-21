@@ -24,4 +24,8 @@ public class RestAPI {
     return Application.dieJobRepo.findAll();
   }
 
+  @RequestMapping(value = "/dieBatches", method = RequestMethod.GET, produces = "application/json")
+  public Iterable<DieBatch> showDieBatches() {
+    return Application.dieBatchRepo.findAll();
+  }
 }

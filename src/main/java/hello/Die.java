@@ -17,6 +17,8 @@ import javax.persistence.Lob;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
 
 @Entity
@@ -29,10 +31,12 @@ public class Die {
   public long id;
   @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
   @ElementCollection(targetClass = DieFace.class)
-  public List<DieFace> faces = new ArrayList<DieFace>();
+  private List<DieFace> faces = new ArrayList<DieFace>();
   @Transient
+  @JsonIgnore
   private Image map; // initial map file; should be tied to the mapBytes
   @Lob
+  @JsonIgnore
   private byte[] mapBytes;
   public static int square = 200;
 
@@ -51,27 +55,33 @@ public class Die {
     faces.add(new DieFace(Utils.cut(map, square, 3 * square, square, square)));
   }
 
-  public byte[] getMap() {
-    return mapBytes;
-  }
-
-  public void setMap(byte[] map) {
-    this.map = Utils.ByteArrayToImage(map);
+  public void setMap(byte[] mapBytes) {
+    this.map = Utils.ByteArrayToImage(mapBytes);
+    this.mapBytes = mapBytes;
   }
 
   public void setMap(Image map) {
-    this.map = map;
     mapBytes = Utils.ImageToByteArray(map);
+    this.map = map;
+  }
+
+  public Image getMap() {
+    if (map == null)
+      this.map = Utils.ByteArrayToImage(mapBytes);
+    return map;
+  }
+
+  public DieFace getFace(int i) {
+    return faces.get(i);
+  }
+
+  public List<DieFace> getFaces() {
+    return faces;
   }
 
   @Column(name = "mapBytes", nullable = true)
   public byte[] getMapBytes() {
     return mapBytes;
-  }
-
-  public void setMapBytes(byte[] mapBytes) {
-    this.mapBytes = mapBytes;
-    map = Utils.ByteArrayToImage(mapBytes);
   }
 
   public static Die getBlank() {

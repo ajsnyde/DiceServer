@@ -11,6 +11,7 @@
                         <p id="coordinates">LOADING...</p>
                         <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
                         <script type="text/javascript">
+                        	Stripe.setPublishableKey('pk_test_tD7nrERdypFuqGQZKcjhSuMk');
                             $(document).ready(function(){
                                 $("body").mousemove(function(event){
                                 document.getElementById("coordinates").innerHTML="Your mouse is at: ("+ event.pageX +"," + event.pageY+")";
@@ -20,6 +21,7 @@
                         <script src="http://code.jquery.com/jquery-3.1.1.min.js"></script>
     					<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
                         <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/84/three.js"></script>
+                        <script type="text/javascript" src="https://js.stripe.com/v2/"></script>
                         <script th:inline="javascript">
                             var camera, scene, renderer;
                             var mesh;
@@ -108,8 +110,19 @@
                 <img class="img" th:src="@{'/die/'+${id}+'/map'}" alt=""/>
                 <form action="/Job" method="post">
 					DieId: <input type="text" name="dieId" th:value="${id}"/><br/>
- 					Quantity: <input type="number" min="0" max="500" step="1" name="quantity" th:value="1"/><br/>
+ 					Quantity: <input id="quantity" type="number" min="0" max="500" step="1" name="quantity" th:value="1"/><br/>
   					<input type="submit" value="Submit"/>
+				</form>
+				<form action="/pay" method="POST">
+					<script
+					  src="https://checkout.stripe.com/checkout.js" class="stripe-button"
+					  data-key="pk_test_tD7nrERdypFuqGQZKcjhSuMk"
+					  data-amount="$42"
+					  data-name="Dice Server"
+					  data-description="Dice"
+					  data-image="https://stripe.com/img/documentation/checkout/marketplace.png"
+					  data-locale="auto">
+					</script>
 				</form>
             </div>
         </div>
