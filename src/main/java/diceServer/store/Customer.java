@@ -17,7 +17,7 @@ import diceServer.dice.DieOrder;
 
 @Entity
 @Table(name = "customer")
-public class Customer {
+public class Customer extends com.stripe.model.Customer {
   String name;
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
@@ -25,4 +25,7 @@ public class Customer {
   @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
   @ElementCollection(targetClass = DieOrder.class)
   private List<DieOrder> orders = new ArrayList<DieOrder>();
+
+  String address;
+
 }

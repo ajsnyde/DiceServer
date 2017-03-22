@@ -9,6 +9,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.web.servlet.view.InternalResourceViewResolver;
+import org.thymeleaf.spring4.SpringTemplateEngine;
+import org.thymeleaf.spring4.templateresolver.SpringResourceTemplateResolver;
+import org.thymeleaf.spring4.view.ThymeleafViewResolver;
 
 import diceServer.dice.DieBatchRepo;
 import diceServer.dice.DieFaceRepo;
@@ -58,6 +62,20 @@ public class Application {
     builder.dateFormat(new SimpleDateFormat("yyyy-MM-dd"));
     return builder;
   }
+
+  /*
+  @Bean
+  public InternalResourceViewResolver jspViewResolver() {
+    InternalResourceViewResolver resolver = new InternalResourceViewResolver();
+    resolver.setViewClass(org.springframework.web.servlet.view.InternalResourceView.class);
+    resolver.setPrefix("/");
+    resolver.setSuffix(".jsp");
+    resolver.setContentType("text/html");
+    resolver.setOrder(8);
+    return resolver;
+  }
+*/
+
 
   @Scheduled(fixedDelay = 86400000) // Delete all uploaded files every hour
   public void restartStorage() {

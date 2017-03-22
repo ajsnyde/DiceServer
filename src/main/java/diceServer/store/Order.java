@@ -1,5 +1,7 @@
 package diceServer.store;
 
+import java.sql.Time;
+
 import javax.persistence.CascadeType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -11,5 +13,7 @@ public abstract class Order implements OrderItem {
   @GeneratedValue(strategy = GenerationType.AUTO)
   public long id;
   @ManyToOne(cascade = CascadeType.ALL)
-  private Customer customer;
+  public Customer customer;
+
+  public Time dateCreated;
 }

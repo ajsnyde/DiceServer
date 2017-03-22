@@ -57,6 +57,12 @@ public class FileUploadController {
     return "viewDice";
   }
 
+  @RequestMapping("/hello")
+  public String hello(Model model, @RequestParam(value = "name", required = false, defaultValue = "World") String name) {
+    model.addAttribute("name", name);
+    return "hello";
+  }
+
   @GetMapping("/die/{id}/map")
   @ResponseBody
   public ResponseEntity<Resource> serveMap(@PathVariable long id) {
