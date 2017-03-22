@@ -27,10 +27,12 @@
                             var mesh;
                             init();
                             animate();
+                            var face1;
                             function init() {
                             	var mouseDown = 0;
                             	var mouseDownX = 0;
                         	    var mouseDownY = 0;
+                        	    
                             	document.body.onmousedown = function() { 
                             	    mouseDown = 1;
                             	    mouseDownX = 0;
@@ -51,23 +53,25 @@
                                var materials = [];
                                /*<![CDATA[*/
                                materials.push(new THREE.MeshBasicMaterial({
-                                       map: THREE.ImageUtils.loadTexture( "http://localhost:8080/die/"+id+"/face/0/face" )
+                                       map: THREE.ImageUtils.loadTexture( "/die/"+id+"/face/3/face" )
                                    }));
                                materials.push(new THREE.MeshBasicMaterial({
-                                   map: THREE.ImageUtils.loadTexture( "http://localhost:8080/die/"+id+"/face/1/face")
+                                   map: THREE.ImageUtils.loadTexture( "/die/"+id+"/face/1/face")
                                }));
                                materials.push(new THREE.MeshBasicMaterial({
-                                   map: THREE.ImageUtils.loadTexture( "http://localhost:8080/die/"+id+"/face/2/face")
+                                   map: THREE.ImageUtils.loadTexture( "/die/"+id+"/face/2/face")
                                }));
                                materials.push(new THREE.MeshBasicMaterial({
-                                   map: THREE.ImageUtils.loadTexture( "http://localhost:8080/die/"+id+"/face/3/face")
+                                   map: THREE.ImageUtils.loadTexture( "/die/"+id+"/face/5/face")
                                }));
                                materials.push(new THREE.MeshBasicMaterial({
-                                   map: THREE.ImageUtils.loadTexture( "http://localhost:8080/die/"+id+"/face/4/face")
+                                   map: THREE.ImageUtils.loadTexture( "/die/"+id+"/face/4/face")
                                }));
                                materials.push(new THREE.MeshBasicMaterial({
-                                   map: THREE.ImageUtils.loadTexture( "http://localhost:8080/die/"+id+"/face/5/face")
+                                   map: THREE.ImageUtils.loadTexture( "/die/"+id+"/face/0/face")
                                }));
+                               face1 = materials[1];
+
                                /*]]>*/
                                 dice = new THREE.Mesh(
                                     new THREE.BoxGeometry( 200, 200, 200 ),
@@ -108,12 +112,18 @@
                     </div>
                 </div>
                 <img class="img" th:src="@{'/die/'+${id}+'/map'}" alt=""/>
+                <hr/>
+                Create Job:
                 <form action="/Job" method="post">
 					DieId: <input type="text" name="dieId" th:value="${id}"/><br/>
  					Quantity: <input id="quantity" type="number" min="0" max="500" step="1" name="quantity" th:value="1"/><br/>
   					<input type="submit" value="Submit"/>
 				</form>
+				<hr/>
+				Order Dice (TODO: create [job/order])
 				<form action="/pay" method="POST">
+					DieId: <input type="text" name="dieId" th:value="${id}"/><br/>
+ 					Quantity: <input id="quantity" type="number" min="0" max="500" step="1" name="quantity" th:value="1"/><br/>
 					<script
 					  src="https://checkout.stripe.com/checkout.js" class="stripe-button"
 					  data-key="pk_test_tD7nrERdypFuqGQZKcjhSuMk"

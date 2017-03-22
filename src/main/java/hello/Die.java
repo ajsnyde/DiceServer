@@ -9,7 +9,6 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -19,7 +18,6 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonView;
 
 @Entity
 @Table(name = "die")
@@ -27,9 +25,8 @@ public class Die {
   static Die blank = null;
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
-  @JsonView(Long.class)
   public long id;
-  @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+  @OneToMany(cascade = CascadeType.ALL)
   @ElementCollection(targetClass = DieFace.class)
   private List<DieFace> faces = new ArrayList<DieFace>();
   @Transient

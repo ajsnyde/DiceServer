@@ -8,10 +8,23 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.math.BigInteger;
+import java.security.SecureRandom;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.imageio.ImageIO;
 
 import org.springframework.web.multipart.MultipartFile;
+
+import com.stripe.Stripe;
+import com.stripe.exception.APIConnectionException;
+import com.stripe.exception.APIException;
+import com.stripe.exception.AuthenticationException;
+import com.stripe.exception.CardException;
+import com.stripe.exception.InvalidRequestException;
+import com.stripe.model.Charge;
+import com.stripe.net.RequestOptions;
 
 import ij.ImagePlus;
 import ij.process.ImageProcessor;
@@ -79,5 +92,24 @@ public class Utils {
       e.printStackTrace();
     }
     return convFile;
+  }
+
+  public static void charge(String token, int amount) {
+
+    Stripe.apiKey = "sk_test_KxLUHNW5j4SgB2IKOgRnGPwK"; // TEST ONLY - MUST BE REPLACED IN PROD
+
+    Map<String, Object> chargeParams = new HashMap<String, Object>();
+    chargeParams.put("amount", amount);
+    chargeParams.put("currency", "usd");
+    chargeParams.put("description", "Charge for liam.davis@example.com");
+    chargeParams.put("source", token);
+
+    RequestOptions options = RequestOptions.builder().setIdempotencyKey(new BigInteger(130, new SecureRandom()).toString(32)).build();
+
+    try {
+      Charge.create(chargeParams, options);
+    } catch (AuthenticationException | InvalidRequestException | APIConnectionException | CardException | APIException e) {
+      e.printStackTrace();
+    }
   }
 }

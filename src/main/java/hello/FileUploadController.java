@@ -122,7 +122,7 @@ public class FileUploadController {
   }
 
   @PostMapping("/Job")
-  public String handleFileUpload(@RequestParam("dieId") long dieId, @RequestParam("quantity") int quantity, RedirectAttributes redirectAttributes) {
+  public String createJob(@RequestParam("dieId") long dieId, @RequestParam("quantity") int quantity) {
     Die die = Application.dieRepo.findOne(dieId);
     if (die != null) {
       DieJob job = new DieJob(die, quantity);
@@ -133,9 +133,14 @@ public class FileUploadController {
   }
 
   @PostMapping("/pay")
-  public String pay() {
-
-    return "redirect:/viewDie/";
+  public String pay(@RequestParam("stripeToken") String stripeToken, @RequestParam("dieId") long dieId, @RequestParam("quantity") int quantity) {
+    try {
+      Utils.charge(stripeToken, quantity * 300);
+      createJob(dieId, quantity);
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+    return "redirect:/viewDie/" + dieId;
   }
 
   @ExceptionHandler(StorageFileNotFoundException.class)
