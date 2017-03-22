@@ -17,10 +17,11 @@ import dice.DieOrderRepo;
 import dice.DieRepo;
 import storage.StorageProperties;
 import storage.StorageService;
+import store.CustomerRepo;
 
 @SpringBootApplication
 @EnableConfigurationProperties(StorageProperties.class)
-@ComponentScan(basePackages = { "app", "storage", "dice" })
+@ComponentScan(basePackages = { "app", "storage", "dice", "store" })
 public class Application {
 
   StorageService storageService;

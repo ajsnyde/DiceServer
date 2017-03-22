@@ -14,6 +14,9 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import store.Order;
+import store.OrderItem;
+
 @Entity
 @Table(name = "dieOrder")
 public class DieOrder extends Order implements OrderItem {

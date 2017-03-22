@@ -15,6 +15,7 @@ import dice.Die;
 import dice.DieBatch;
 import dice.DieFace;
 import dice.DieJob;
+import dice.SimpleCompiler;
 import storage.StorageFileNotFoundException;
 import storage.StorageService;
 

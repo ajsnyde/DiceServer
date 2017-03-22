@@ -1,4 +1,4 @@
-package app;
+package dice;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -7,9 +7,8 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 
-import dice.Die;
-import dice.DieBatch;
-import dice.DieJob;
+import app.Application;
+import app.Utils;
 import ij.ImagePlus;
 
 public class SimpleCompiler implements BatchCompilerStrategy {

@@ -1,6 +1,4 @@
-package app;
-
-import dice.DieBatch;
+package dice;
 
 public interface BatchCompilerStrategy {
   public DieBatch compile();

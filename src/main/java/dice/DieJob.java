@@ -10,6 +10,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import store.OrderItem;
+
 @Entity
 @Table(name = "DieJob")
 public class DieJob implements OrderItem {

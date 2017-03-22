@@ -9,8 +9,8 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @Configuration
 @EnableAsync
 @EnableScheduling
-@EnableJpaRepositories(basePackages = { "app", "storage", "dice" })
-@EntityScan(basePackages = { "app", "storage", "dice" })
+@EnableJpaRepositories(basePackages = { "app", "storage", "dice", "store" })
+@EntityScan(basePackages = { "app", "storage", "dice", "store" })
 // @EnableWebSecurity
 public class AppConfig {
 

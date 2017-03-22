@@ -1,12 +1,10 @@
-package dice;
+package store;
 
 import javax.persistence.CascadeType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
-
-import app.Customer;
 
 public abstract class Order implements OrderItem {
   @Id

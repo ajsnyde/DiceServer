@@ -1,4 +1,4 @@
-package app;
+package store;
 
 import org.springframework.data.repository.CrudRepository;
 
