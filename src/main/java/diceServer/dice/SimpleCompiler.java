@@ -1,4 +1,4 @@
-package dice;
+package diceServer.dice;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -7,8 +7,8 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 
-import app.Application;
-import app.Utils;
+import diceServer.app.Application;
+import diceServer.app.Utils;
 import ij.ImagePlus;
 
 public class SimpleCompiler implements BatchCompilerStrategy {

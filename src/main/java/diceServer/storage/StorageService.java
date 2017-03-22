@@ -1,4 +1,4 @@
-package storage;
+package diceServer.storage;
 
 import org.springframework.core.io.Resource;
 import org.springframework.web.multipart.MultipartFile;

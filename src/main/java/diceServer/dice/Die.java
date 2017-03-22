@@ -1,4 +1,4 @@
-package dice;
+package diceServer.dice;
 
 import java.awt.Image;
 import java.util.ArrayList;
@@ -19,7 +19,7 @@ import javax.persistence.Transient;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import app.Utils;
+import diceServer.app.Utils;
 
 @Entity
 @Table(name = "die")

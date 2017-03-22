@@ -1,4 +1,4 @@
-package dice;
+package diceServer.dice;
 
 import java.util.List;
 

@@ -1,4 +1,4 @@
-package app;
+package diceServer.app;
 
 import java.text.SimpleDateFormat;
 import org.springframework.boot.CommandLineRunner;
@@ -10,18 +10,18 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.scheduling.annotation.Scheduled;
 
-import dice.DieBatchRepo;
-import dice.DieFaceRepo;
-import dice.DieJobRepo;
-import dice.DieOrderRepo;
-import dice.DieRepo;
-import storage.StorageProperties;
-import storage.StorageService;
-import store.CustomerRepo;
+import diceServer.dice.DieBatchRepo;
+import diceServer.dice.DieFaceRepo;
+import diceServer.dice.DieJobRepo;
+import diceServer.dice.DieOrderRepo;
+import diceServer.dice.DieRepo;
+import diceServer.storage.StorageProperties;
+import diceServer.storage.StorageService;
+import diceServer.store.CustomerRepo;
 
 @SpringBootApplication
 @EnableConfigurationProperties(StorageProperties.class)
-@ComponentScan(basePackages = { "app", "storage", "dice", "store" })
+@ComponentScan(basePackages = { "diceServer" })
 public class Application {
 
   StorageService storageService;

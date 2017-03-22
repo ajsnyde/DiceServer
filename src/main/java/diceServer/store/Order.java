@@ -1,4 +1,4 @@
-package store;
+package diceServer.store;
 
 import javax.persistence.CascadeType;
 import javax.persistence.GeneratedValue;

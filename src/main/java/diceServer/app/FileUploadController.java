@@ -1,4 +1,4 @@
-package app;
+package diceServer.app;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
@@ -11,13 +11,13 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBuilder;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import dice.Die;
-import dice.DieBatch;
-import dice.DieFace;
-import dice.DieJob;
-import dice.SimpleCompiler;
-import storage.StorageFileNotFoundException;
-import storage.StorageService;
+import diceServer.dice.Die;
+import diceServer.dice.DieBatch;
+import diceServer.dice.DieFace;
+import diceServer.dice.DieJob;
+import diceServer.dice.SimpleCompiler;
+import diceServer.storage.StorageFileNotFoundException;
+import diceServer.storage.StorageService;
 
 import java.awt.Image;
 import java.io.File;

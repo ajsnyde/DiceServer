@@ -1,4 +1,4 @@
-package dice;
+package diceServer.dice;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,8 +14,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import store.Order;
-import store.OrderItem;
+import diceServer.store.Order;
+import diceServer.store.OrderItem;
 
 @Entity
 @Table(name = "dieOrder")

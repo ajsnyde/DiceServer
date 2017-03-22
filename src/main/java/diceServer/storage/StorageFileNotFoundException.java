@@ -1,4 +1,4 @@
-package storage;
+package diceServer.storage;
 
 public class StorageFileNotFoundException extends StorageException {
 

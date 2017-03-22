@@ -1,4 +1,4 @@
-package app;
+package diceServer.app;
 
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.Configuration;
@@ -9,8 +9,8 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @Configuration
 @EnableAsync
 @EnableScheduling
-@EnableJpaRepositories(basePackages = { "app", "storage", "dice", "store" })
-@EntityScan(basePackages = { "app", "storage", "dice", "store" })
+@EnableJpaRepositories(basePackages = { "diceServer" })
+@EntityScan(basePackages = { "diceServer" })
 // @EnableWebSecurity
 public class AppConfig {
 

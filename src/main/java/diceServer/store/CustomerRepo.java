@@ -1,4 +1,4 @@
-package store;
+package diceServer.store;
 
 import org.springframework.data.repository.CrudRepository;
 

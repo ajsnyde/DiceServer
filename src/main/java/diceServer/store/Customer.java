@@ -1,4 +1,4 @@
-package store;
+package diceServer.store;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,7 +13,7 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-import dice.DieOrder;
+import diceServer.dice.DieOrder;
 
 @Entity
 @Table(name = "customer")

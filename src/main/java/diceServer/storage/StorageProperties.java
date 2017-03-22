@@ -1,4 +1,4 @@
-package storage;
+package diceServer.storage;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
