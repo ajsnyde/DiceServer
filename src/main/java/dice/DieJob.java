@@ -1,4 +1,4 @@
-package hello;
+package dice;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;

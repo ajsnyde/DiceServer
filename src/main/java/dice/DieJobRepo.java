@@ -1,4 +1,4 @@
-package hello;
+package dice;
 
 import java.util.List;
 

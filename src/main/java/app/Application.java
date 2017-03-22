@@ -1,7 +1,4 @@
-package hello;
-
-import hello.storage.StorageProperties;
-import hello.storage.StorageService;
+package app;
 
 import java.text.SimpleDateFormat;
 import org.springframework.boot.CommandLineRunner;
@@ -9,11 +6,21 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.scheduling.annotation.Scheduled;
 
+import dice.DieBatchRepo;
+import dice.DieFaceRepo;
+import dice.DieJobRepo;
+import dice.DieOrderRepo;
+import dice.DieRepo;
+import storage.StorageProperties;
+import storage.StorageService;
+
 @SpringBootApplication
 @EnableConfigurationProperties(StorageProperties.class)
+@ComponentScan(basePackages = { "app", "storage", "dice" })
 public class Application {
 
   StorageService storageService;

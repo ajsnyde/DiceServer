@@ -1,4 +1,4 @@
-package hello;
+package dice;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -15,6 +15,8 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import app.Utils;
 
 @Entity
 @Table(name = "dieface")

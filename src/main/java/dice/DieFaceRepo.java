@@ -1,4 +1,4 @@
-package hello;
+package dice;
 
 import org.springframework.data.repository.CrudRepository;
 

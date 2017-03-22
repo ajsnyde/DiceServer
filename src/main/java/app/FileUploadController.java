@@ -1,7 +1,4 @@
-package hello;
-
-import hello.storage.StorageFileNotFoundException;
-import hello.storage.StorageService;
+package app;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
@@ -13,6 +10,13 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBuilder;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import dice.Die;
+import dice.DieBatch;
+import dice.DieFace;
+import dice.DieJob;
+import storage.StorageFileNotFoundException;
+import storage.StorageService;
 
 import java.awt.Image;
 import java.io.File;
