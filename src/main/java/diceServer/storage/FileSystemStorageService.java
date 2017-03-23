@@ -14,12 +14,13 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.nio.file.StandardOpenOption;
 import java.util.stream.Stream;
 
 @Service
 public class FileSystemStorageService implements StorageService {
 
-  private final Path rootLocation;
+  public final Path rootLocation;
 
   @Autowired
   public FileSystemStorageService(StorageProperties properties) {
@@ -92,6 +93,21 @@ public class FileSystemStorageService implements StorageService {
       Files.createDirectory(rootLocation);
     } catch (IOException e) {
       throw new StorageException("Could not initialize storage", e);
+    }
+  }
+
+  @Override
+  public void store(String filename, byte[] bytes) {
+    try {
+      if (bytes.length == 0) {
+        throw new StorageException("Failed to store empty file " + filename);
+      }
+      if (new File(filename).getCanonicalPath() == null) {
+        throw new StorageException("Failed to instantiate file " + filename);
+      }
+      Files.write(this.rootLocation.resolve(new File(filename).toPath()), bytes, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+    } catch (IOException e) {
+      throw new StorageException("Failed to store file " + filename, e);
     }
   }
 }

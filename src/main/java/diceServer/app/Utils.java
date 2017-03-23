@@ -112,4 +112,8 @@ public class Utils {
       e.printStackTrace();
     }
   }
+
+  public static String sanitizeFilename(String filename) {
+    return filename.replaceAll("[^a-zA-Z0-9.-]", "_");
+  }
 }
