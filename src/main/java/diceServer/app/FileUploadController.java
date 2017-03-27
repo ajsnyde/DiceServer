@@ -26,6 +26,7 @@ import java.nio.file.Files;
 import java.util.stream.Collectors;
 
 import javax.imageio.ImageIO;
+import javax.servlet.http.HttpSession;
 
 @Controller
 public class FileUploadController {
@@ -66,7 +67,7 @@ public class FileUploadController {
   @GetMapping("/die/{id}/map")
   @ResponseBody
   public ResponseEntity<Resource> serveMap(@PathVariable long id) {
-    return serveBMP("die" + id, Application.dieRepo.findOne(id).getMap(), "BMP");
+    return serveBMP("die" + id, Application.dieRepo.findOne(id).getMap(), "PNG");
   }
 
   @GetMapping("/die/{id}/face/{faceId}/face")
@@ -74,14 +75,14 @@ public class FileUploadController {
   public ResponseEntity<Resource> serveFace(@PathVariable long id, @PathVariable int faceId) {
     Die die = Application.dieRepo.findOne(id);
     DieFace face = die.getFace(faceId);
-    return serveBMP("die" + id + "face" + faceId, face.getFace(), "BMP");
+    return serveBMP("die" + id + "face" + faceId, face.getFace(), "PNG");
   }
 
   @GetMapping("/diebatch/{id}/face/{faceId}")
   @ResponseBody
   public ResponseEntity<Resource> serveDieBatchFace(@PathVariable long id, @PathVariable long faceId) {
     DieBatch dieBatch = Application.dieBatchRepo.findOne(id);
-    return serveBMP("diebatch" + id + "face" + faceId, dieBatch.faces.get((int) faceId), "BMP");
+    return serveBMP("diebatch" + id + "face" + faceId, dieBatch.faces.get((int) faceId), "PNG");
   }
 
   public ResponseEntity<Resource> serveBMP(String filename, Image image, String format) {
@@ -105,7 +106,7 @@ public class FileUploadController {
     DieBatch batch = new SimpleCompiler().compile();
     // Application.dieBatchRepo.save(batch);
     // Batch saving is broken due to duplicate Die objects
-    return serveBMP("dieBatch", batch.faces.get(1), "BMP");
+    return serveBMP("dieBatch", batch.faces.get(1), "PNG");
   }
 
   @PostMapping("/Upload")
@@ -141,7 +142,10 @@ public class FileUploadController {
   }
 
   @PostMapping("/pay")
-  public String pay(@RequestParam("stripeToken") String stripeToken, @RequestParam("dieId") long dieId, @RequestParam("quantity") int quantity) {
+  public String pay(@RequestParam("stripeToken") String stripeToken, @RequestParam("dieId") long dieId, @RequestParam("quantity") int quantity, HttpSession session) {
+    session.setAttribute("session", new Session());
+    System.out.println(session.getAttribute("session"));
+
     try {
       Utils.charge(stripeToken, quantity * 300);
       createJob(dieId, quantity);

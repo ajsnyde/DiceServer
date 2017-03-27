@@ -39,6 +39,10 @@ public class Utils {
     return ip.getBufferedImage();
   }
 
+  public static Image cutSquare(Image image, int x, int y, int square) {
+    return cut(image, x, y, square, square);
+  }
+
   // Pastes clipboard to image at the parametered coordinates. No resizing or checks
   public static Image paste(Image image, Image clipboard, int x, int y) {
     image.getGraphics().drawImage(clipboard, x, y, null);
