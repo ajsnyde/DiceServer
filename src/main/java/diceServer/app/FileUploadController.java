@@ -45,6 +45,16 @@ public class FileUploadController {
     return "uploadForm";
   }
 
+  @GetMapping("/getBatch")
+  public String getBatch() {
+    return "getBatch";
+  }
+
+  @GetMapping("/badSession")
+  public String badSession() {
+    return "redirect:/";
+  }
+
   @GetMapping("/files/{filename}")
   @ResponseBody
   public ResponseEntity<Resource> serveFile(@PathVariable String filename) {
@@ -58,16 +68,10 @@ public class FileUploadController {
     return "viewDice";
   }
 
-  @RequestMapping("/hello")
-  public String hello(Model model, @RequestParam(value = "name", required = false, defaultValue = "World") String name) {
-    model.addAttribute("name", name);
-    return "hello";
-  }
-
   @GetMapping("/die/{id}/map")
   @ResponseBody
   public ResponseEntity<Resource> serveMap(@PathVariable long id) {
-    return serveBMP("die" + id, Application.dieRepo.findOne(id).getMap(), "PNG");
+    return serveIMG("die" + id, Application.dieRepo.findOne(id).getMap(), "PNG");
   }
 
   @GetMapping("/die/{id}/face/{faceId}/face")
@@ -75,17 +79,17 @@ public class FileUploadController {
   public ResponseEntity<Resource> serveFace(@PathVariable long id, @PathVariable int faceId) {
     Die die = Application.dieRepo.findOne(id);
     DieFace face = die.getFace(faceId);
-    return serveBMP("die" + id + "face" + faceId, face.getFace(), "PNG");
+    return serveIMG("die" + id + "face" + faceId, face.getFace(), "PNG");
   }
 
   @GetMapping("/diebatch/{id}/face/{faceId}")
   @ResponseBody
   public ResponseEntity<Resource> serveDieBatchFace(@PathVariable long id, @PathVariable long faceId) {
     DieBatch dieBatch = Application.dieBatchRepo.findOne(id);
-    return serveBMP("diebatch" + id + "face" + faceId, dieBatch.faces.get((int) faceId), "PNG");
+    return serveIMG("diebatch" + id + "face" + faceId, dieBatch.faces.get((int) faceId), "PNG");
   }
 
-  public ResponseEntity<Resource> serveBMP(String filename, Image image, String format) {
+  public ResponseEntity<Resource> serveIMG(String filename, Image image, String format) {
     try {
       ByteArrayOutputStream baos = new ByteArrayOutputStream();
       ImageIO.write(Utils.ImageToBufferedImage(image), format, baos);
@@ -106,14 +110,15 @@ public class FileUploadController {
     DieBatch batch = new SimpleCompiler().compile();
     // Application.dieBatchRepo.save(batch);
     // Batch saving is broken due to duplicate Die objects
-    return serveBMP("dieBatch", batch.faces.get(1), "PNG");
+    return serveIMG("dieBatch", batch.faces.get(1), "PNG");
   }
 
   @PostMapping("/Upload")
   public String handleFileUpload(@RequestParam("file") MultipartFile file, RedirectAttributes redirectAttributes) {
     Die die = null;
     try {
-      die = new Die(ImageIO.read(Utils.convert(file)));
+      Image image = ImageIO.read(Utils.convert(file));
+      die = new Die(image);
       die.setMap(Files.readAllBytes(Utils.convert(file).toPath()));
       die.setMap(Utils.ByteArrayToImage(Files.readAllBytes(Utils.convert(file).toPath())));
       Application.dieRepo.save(die);

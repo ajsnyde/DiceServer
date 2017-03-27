@@ -1,0 +1,42 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<link rel="stylesheet"
+	href="https://maxcdn.bootstrapcdn.com/bootswatch/3.3.7/cyborg/bootstrap.min.css"></link>
+</head>
+<body>
+	<nav class="navbar navbar-default">
+		<div class="container-fluid">
+			<div class="navbar-header">
+				<a class="navbar-brand" href="#">Dice Server</a>
+			</div>
+			<ul class="nav navbar-nav">
+				<li class="active"><a href="#">Home</a></li>
+				<li><a href="#">Upload</a></li>
+				<li><a href="#">Help and Documentation</a></li>
+				<li><a href="#">Contact</a></li>
+				<li><a href="/getBatch">Get Batch</a></li>
+			</ul>
+		</div>
+	</nav>
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular.min.js"></script>
+	<form method="POST" enctype="multipart/form-data" action="/">
+		<div class="form-group">
+		  <div class="form-group">
+    <label for="exampleSelect1">Fixtures/Settings</label>
+    <select class="form-control">
+      <option>ROW BY ROW (global)</option>
+      <option>ROW BY ROW (cell)</option>
+    </select>
+  </div>
+		   <label for="exampleSelect2">Jobs</label>
+			<select class="form-control" id="parts" name="parts" multiple="multiple">
+			  <option th:each="part : ${partsAtribute}" 
+                    th:selected="${servisAttribute.parts.contains(part)}"
+                    th:value="${part.id}"
+                    th:text="${part.name}">Part name</option>
+			</select>
+  		</div>
+		<button type="submit" class="btn btn-default" value="/dieBatch">Get Batch Files (.zip)</button>
+	</form>
+</body>
+</html>

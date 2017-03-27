@@ -44,7 +44,7 @@ public class SimpleCompiler implements BatchCompilerStrategy {
     int cols = 5;
     ArrayList<Image> images = new ArrayList<Image>();
 
-    BufferedImage b_img = new BufferedImage(Die.square * rows, Die.square * cols, 1);
+    BufferedImage b_img = new BufferedImage(Die.innerSquare * rows, Die.innerSquare * cols, 1);
     Graphics2D graphics = b_img.createGraphics();
     graphics.setPaint(new Color(255, 255, 255));
     graphics.fillRect(0, 0, b_img.getWidth(), b_img.getHeight());
@@ -53,7 +53,7 @@ public class SimpleCompiler implements BatchCompilerStrategy {
       ImagePlus img = new ImagePlus("Side #" + k, b_img);
       for (int i = 0; i < rows; ++i)
         for (int j = 0; j < cols && (((i * rows) + j) < dice.size()); ++j) {
-          img.setImage(Utils.paste(img.getImage(), dice.get((i * rows) + j).getFace(k).getFace(), j * Die.square, i * Die.square));
+          img.setImage(Utils.paste(img.getImage(), dice.get((i * rows) + j).getFace(k).getFace(), j * Die.innerSquare, i * Die.innerSquare));
         }
       images.add(img.getImage());
     }

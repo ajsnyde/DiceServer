@@ -40,7 +40,8 @@ public class Die {
   private byte[] mapBytes;
   private Color color;
 
-  public static int square = 125;
+  public static int innerSquare = 125;
+  public static int outerSquare = 157;
 
   private Die() {
     if (mapBytes != null)
@@ -49,12 +50,12 @@ public class Die {
 
   public Die(Image map) {
     this.map = map;
-    faces.add(new DieFace(Utils.cutSquare(map, 176, 17, square)));
-    faces.add(new DieFace(Utils.cutSquare(map, 17, 176, square)));
-    faces.add(new DieFace(Utils.cutSquare(map, 176, 176, square)));
-    faces.add(new DieFace(Utils.cutSquare(map, 335, 176, square)));
-    faces.add(new DieFace(Utils.cutSquare(map, 176, 335, square)));
-    faces.add(new DieFace(Utils.cutSquare(map, 176, 494, square)));
+    faces.add(new DieFace(Utils.cutSquare(map, 176, 17, innerSquare)));
+    faces.add(new DieFace(Utils.cutSquare(map, 17, 176, innerSquare)));
+    faces.add(new DieFace(Utils.cutSquare(map, 176, 176, innerSquare)));
+    faces.add(new DieFace(Utils.cutSquare(map, 335, 176, innerSquare)));
+    faces.add(new DieFace(Utils.cutSquare(map, 176, 335, innerSquare)));
+    faces.add(new DieFace(Utils.cutSquare(map, 176, 494, innerSquare)));
     color = Color.WHITE;
   }
 

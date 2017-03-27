@@ -36,8 +36,13 @@ public class DieFace {
   private DieFace() {
   }
 
+  // takes face as inner portion of face, centering it within overall face dimensions.
   public DieFace(Image face) {
-    setFace(face);
+    BufferedImage face2 = new BufferedImage(Die.outerSquare, Die.outerSquare, BufferedImage.TYPE_3BYTE_BGR);
+    face2.getGraphics().setColor(new Color(255, 255, 255));
+    face2.getGraphics().fillRect(0, 0, Die.outerSquare, Die.outerSquare);
+    Utils.paste(face2, face, (Die.outerSquare - Die.innerSquare) / 2, (Die.outerSquare - Die.innerSquare) / 2);
+    setFace(face2);
   }
 
   @Column(name = "face", nullable = true)
@@ -64,7 +69,7 @@ public class DieFace {
 
   public static DieFace getBlank() {
     if (blank == null) {
-      BufferedImage b_img = new BufferedImage(Die.square, Die.square, 0);
+      BufferedImage b_img = new BufferedImage(Die.outerSquare, Die.outerSquare, 0);
       Graphics2D graphics = b_img.createGraphics();
       graphics.setPaint(new Color(255, 255, 255));
       graphics.fillRect(0, 0, b_img.getWidth(), b_img.getHeight());
