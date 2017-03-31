@@ -1,6 +1,5 @@
 package diceServer.dice;
 
-import java.awt.Color;
 import java.awt.Image;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -38,7 +37,7 @@ public class Die {
   @Lob
   @JsonIgnore
   private byte[] mapBytes;
-  private Color color;
+  public String color;
 
   public static int innerSquare = 125;
   public static int outerSquare = 157;
@@ -56,10 +55,10 @@ public class Die {
     faces.add(new DieFace(Utils.cutSquare(map, 335, 176, innerSquare)));
     faces.add(new DieFace(Utils.cutSquare(map, 176, 335, innerSquare)));
     faces.add(new DieFace(Utils.cutSquare(map, 176, 494, innerSquare)));
-    color = Color.WHITE;
+    color = "White";
   }
 
-  public Die(Image map, Color color) {
+  public Die(Image map, String color) {
     this(map);
     this.color = color;
   }

@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.scheduling.annotation.Scheduled;
+
 import diceServer.dice.DieBatchRepo;
 import diceServer.dice.DieFaceRepo;
 import diceServer.dice.DieJobRepo;
@@ -43,7 +44,6 @@ public class Application {
     dieOrderRepo = dorepo;
     customerRepo = crepo;
     this.storageService = storageService;
-
     return (args) -> {
       restartStorage();
     };

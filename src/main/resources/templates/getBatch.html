@@ -28,12 +28,11 @@
       <option>ROW BY ROW (cell)</option>
     </select>
   </div>
-		   <label for="exampleSelect2">Jobs</label>
-			<select class="form-control" id="parts" name="parts" multiple="multiple">
-			  <option th:each="part : ${partsAtribute}" 
-                    th:selected="${servisAttribute.parts.contains(part)}"
-                    th:value="${part.id}"
-                    th:text="${part.name}">Part name</option>
+		   <label for="jobs">Jobs</label>
+			<select class="form-control" id="parts" name="jobs" multiple="multiple">
+			  <option th:each="job : ${jobs}" 
+                    th:value="${job.id}"
+                    th:text="${'ID: ' + job.id + ' QUANTITY: ' + job.quantity+ ' COST: ' + job.cost + 'COLOR: ' + job.die.color}">Job</option>
 			</select>
   		</div>
 		<button type="submit" class="btn btn-default" value="/dieBatch">Get Batch Files (.zip)</button>

@@ -1,6 +1,7 @@
 package diceServer.app;
 
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -23,6 +24,7 @@ public class RestAPI {
     return Application.dieRepo.findOne(die);
   }
 
+  @CrossOrigin(origins = "*")
   @RequestMapping(value = "/diejobs", method = RequestMethod.GET, produces = "application/json")
   public Iterable<DieJob> showDieJobs() {
     return Application.dieJobRepo.findAll();

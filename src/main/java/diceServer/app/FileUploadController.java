@@ -15,12 +15,14 @@ import diceServer.dice.Die;
 import diceServer.dice.DieBatch;
 import diceServer.dice.DieFace;
 import diceServer.dice.DieJob;
-import diceServer.dice.SimpleCompiler;
+import diceServer.dice.Fixture;
+import diceServer.dice.FixtureCompiler;
 import diceServer.storage.StorageFileNotFoundException;
 import diceServer.storage.StorageService;
 
 import java.awt.Image;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.stream.Collectors;
@@ -46,7 +48,8 @@ public class FileUploadController {
   }
 
   @GetMapping("/getBatch")
-  public String getBatch() {
+  public String getBatch(Model model) {
+    model.addAttribute("jobs", Application.dieJobRepo.findAll());
     return "getBatch";
   }
 
@@ -107,9 +110,11 @@ public class FileUploadController {
   @GetMapping("/dieBatch")
   @ResponseBody
   public ResponseEntity<Resource> serveImage() {
-    DieBatch batch = new SimpleCompiler().compile();
+    Fixture fixture = new Fixture(new File("C:\\Users\\Dreadhawk\\Desktop\\DiceServer\\resources\\fixture2.json"));
+    DieBatch batch = new FixtureCompiler(fixture).compile();
     // Application.dieBatchRepo.save(batch);
     // Batch saving is broken due to duplicate Die objects
+    batch.zip("dieBatch.zip");
     return serveIMG("dieBatch", batch.faces.get(1), "PNG");
   }
 

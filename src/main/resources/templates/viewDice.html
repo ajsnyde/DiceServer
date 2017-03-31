@@ -116,14 +116,14 @@
                 Create Job:
                 <form action="/Job" method="post">
 					DieId: <input type="text" name="dieId" th:value="${id}"/><br/>
- 					Quantity: <input id="quantity" type="number" min="0" max="500" step="1" name="quantity" th:value="1"/><br/>
+ 					Quantity: <input id="quantity" type="number" min="16" max="500" step="1" name="quantity" th:value="16"/><br/>
   					<input type="submit" value="Submit"/>
 				</form>
 				<hr/>
 				Order Dice (TODO: create [job/order])
 				<form action="/pay" method="POST">
 					DieId: <input type="text" name="dieId" th:value="${id}"/><br/>
- 					Quantity: <input id="quantity" type="number" min="0" max="500" step="1" name="quantity" th:value="1"/><br/>
+ 					Quantity: <input id="quantity" type="number" min="16" max="500" step="1" name="quantity" th:value="16"/><br/>
 					<script
 					  src="https://checkout.stripe.com/checkout.js" class="stripe-button"
 					  data-key="pk_test_tD7nrERdypFuqGQZKcjhSuMk"

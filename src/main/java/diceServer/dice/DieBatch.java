@@ -1,8 +1,12 @@
 package diceServer.dice;
 
 import java.awt.Image;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import javax.persistence.CascadeType;
 import javax.persistence.ElementCollection;
@@ -16,6 +20,8 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import diceServer.app.Utils;
 
 @Entity
 @Table(name = "diebatch")
@@ -32,5 +38,21 @@ public class DieBatch {
 
   public DieBatch() {
     dice = new ArrayList<Die>();
+  }
+
+  public void zip(String zipName) {
+    try {
+      FileOutputStream fos = new FileOutputStream(zipName);
+      ZipOutputStream zos = new ZipOutputStream(fos);
+      for (Image image : faces) {
+        ZipEntry ze = new ZipEntry("image" + image.hashCode() + ".png");
+        zos.putNextEntry(ze);
+        zos.write(Utils.ImageToByteArray(image));
+        zos.closeEntry();
+      }
+      zos.close();
+    } catch (IOException ex) {
+      ex.printStackTrace();
+    }
   }
 }
