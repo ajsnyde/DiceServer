@@ -11,6 +11,8 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBuilder;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.stripe.model.Charge;
+
 import diceServer.dice.Die;
 import diceServer.dice.DieBatch;
 import diceServer.dice.DieFace;
@@ -25,6 +27,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.imageio.ImageIO;
@@ -152,17 +155,15 @@ public class FileUploadController {
   }
 
   @PostMapping("/pay")
-  public String pay(@RequestParam("stripeToken") String stripeToken, @RequestParam("dieId") long dieId, @RequestParam("quantity") int quantity, HttpSession session) {
+  public String pay(@RequestParam Map<String, String> params, HttpSession session) {
     session.setAttribute("session", new Session());
     System.out.println(session.getAttribute("session"));
+    System.out.println(params.get("stripeShippingAddressLine1"));
 
-    try {
-      Utils.charge(stripeToken, quantity * 300);
-      createJob(dieId, quantity);
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-    return "redirect:/viewDie/" + dieId;
+    Charge charge = Utils.charge(params.get("stripeToken"), Integer.parseInt(params.get("quantity")) * 300);
+    createJob(Long.parseLong(params.get("dieId")), Integer.parseInt(params.get("quantity")));
+
+    return "redirect:/viewDie/" + params.get("dieId");
   }
 
   @ExceptionHandler(StorageFileNotFoundException.class)

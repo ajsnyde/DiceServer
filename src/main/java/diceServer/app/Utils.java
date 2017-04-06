@@ -98,23 +98,31 @@ public class Utils {
     return convFile;
   }
 
-  public static void charge(String token, int amount) {
+  public static Charge charge(String token, int amount) {
+    return charge(token, amount, -1);
+  }
 
+  public static Charge charge(String token, int amount, long orderId) {
     Stripe.apiKey = "sk_test_KxLUHNW5j4SgB2IKOgRnGPwK"; // TEST ONLY - MUST BE REPLACED IN PROD
 
     Map<String, Object> chargeParams = new HashMap<String, Object>();
     chargeParams.put("amount", amount);
     chargeParams.put("currency", "usd");
-    chargeParams.put("description", "Charge for liam.davis@example.com");
+    chargeParams.put("description", "Charge for dice");
     chargeParams.put("source", token);
+    Map<String, String> initialMetadata = new HashMap<String, String>();
+    if (orderId != -1)
+      initialMetadata.put("order_id", orderId + "");
+    chargeParams.put("metadata", initialMetadata);
 
     RequestOptions options = RequestOptions.builder().setIdempotencyKey(new BigInteger(130, new SecureRandom()).toString(32)).build();
 
     try {
-      Charge.create(chargeParams, options);
+      return Charge.create(chargeParams, options);
     } catch (AuthenticationException | InvalidRequestException | APIConnectionException | CardException | APIException e) {
       e.printStackTrace();
     }
+    return null;
   }
 
   public static String sanitizeFilename(String filename) {
