@@ -29,7 +29,7 @@ public class FileUploadController {
   public FileUploadController(StorageService storageService) {
   }
 
-  @GetMapping("/")
+  @GetMapping({ "/", "/uploadForm" })
   public String uploadForm() throws IOException {
     return "uploadForm";
   }
@@ -38,6 +38,11 @@ public class FileUploadController {
   public String getBatch(Model model) {
     model.addAttribute("jobs", Application.dieJobRepo.findAll());
     return "getBatch";
+  }
+
+  @GetMapping("/help")
+  public String gethelp() {
+    return "help";
   }
 
   @GetMapping("/viewDie/{id}")

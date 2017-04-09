@@ -1,30 +1,15 @@
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
-<link rel="stylesheet"
-	href="https://maxcdn.bootstrapcdn.com/bootswatch/3.3.7/cyborg/bootstrap.min.css"></link>
+<head th:replace="fragments/navbar :: head">
 </head>
 <body>
-	<nav class="navbar navbar-default">
-		<div class="container-fluid">
-			<div class="navbar-header">
-				<a class="navbar-brand" href="#">Dice Server</a>
-			</div>
-			<ul class="nav navbar-nav">
-				<li class="active"><a href="#">Home</a></li>
-				<li><a href="#">Upload</a></li>
-				<li><a href="#">Help and Documentation</a></li>
-				<li><a href="#">Contact</a></li>
-				<li><a href="/getBatch">Get Batch</a></li>
-			</ul>
-		</div>
-	</nav>
-	<form method="POST" enctype="multipart/form-data" action="/Upload">
-		<div class="form-group">
-			<label for="file">Upload Modified Die Template:</label>
-			<input type="file" class="form-control" id="file" name="file" accept="image/*"/>
-			<small id="emailHelp" class="form-text text-muted">File is recommended to be based from the provided <a href="#">template</a>, in the form of a PNG. See <a href="#">help</a> for details on acceptable uploads.</small>
-		</div>
-		<button type="submit" class="btn btn-default" value="/">Submit</button>
-	</form>
+  <div th:replace="fragments/navbar :: navbar"></div>
+  <form method="POST" enctype="multipart/form-data" action="/Upload">
+    <div class="form-group">
+      <label for="file">Upload Modified Die Template:</label> <input type="file" class="form-control" id="file" name="file" accept="image/*" /> <small id="emailHelp" class="form-text text-muted">File
+        is recommended to be based from the provided <a href="/template.png">template</a>, in the form of a PNG. See <a href="/help">help</a> for details on acceptable uploads.
+      </small>
+    </div>
+    <button type="submit" class="btn btn-default" value="/">Submit</button>
+  </form>
 </body>
 </html>
