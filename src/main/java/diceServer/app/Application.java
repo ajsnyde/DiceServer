@@ -21,7 +21,7 @@ import diceServer.store.CustomerRepo;
 
 @SpringBootApplication
 @EnableConfigurationProperties({ StorageProperties.class })
-@ComponentScan(basePackages = { "diceServer" })
+@ComponentScan(basePackages = { "diceServer", "diceServer.app" })
 public class Application {
   StorageService storageService;
   public static DieRepo dieRepo;
@@ -56,12 +56,6 @@ public class Application {
     builder.dateFormat(new SimpleDateFormat("yyyy-MM-dd"));
     return builder;
   }
-
-  /*
-   * @Bean public InternalResourceViewResolver jspViewResolver() { InternalResourceViewResolver resolver = new InternalResourceViewResolver();
-   * resolver.setViewClass(org.springframework.web.servlet.view.InternalResourceView.class); resolver.setPrefix("/"); resolver.setSuffix(".jsp"); resolver.setContentType("text/html");
-   * resolver.setOrder(8); return resolver; }
-   */
 
   @Scheduled(fixedDelay = 86400000) // Delete all uploaded files every hour
   public void restartStorage() {

@@ -15,6 +15,10 @@ import java.util.Map;
 
 import javax.imageio.ImageIO;
 
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.stripe.Stripe;
@@ -60,7 +64,6 @@ public class Utils {
       imageInByte = baos.toByteArray();
       baos.close();
     } catch (IOException e) {
-      // TODO Auto-generated catch block
       e.printStackTrace();
     }
     return imageInByte;
@@ -120,6 +123,20 @@ public class Utils {
     try {
       return Charge.create(chargeParams, options);
     } catch (AuthenticationException | InvalidRequestException | APIConnectionException | CardException | APIException e) {
+      e.printStackTrace();
+    }
+    return null;
+  }
+
+  public static ResponseEntity<Resource> serveIMG(String filename, Image image, String format) {
+    try {
+      ByteArrayOutputStream baos = new ByteArrayOutputStream();
+      ImageIO.write(Utils.ImageToBufferedImage(image), format, baos);
+      baos.flush();
+      byte[] imageInByte = baos.toByteArray();
+      baos.close();
+      return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + filename + "\"").body(new ByteArrayResource(imageInByte));
+    } catch (IOException e) {
       e.printStackTrace();
     }
     return null;

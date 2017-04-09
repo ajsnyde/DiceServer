@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,11 +14,24 @@ import ij.ImagePlus;
 
 public class FixtureCompiler implements BatchCompilerStrategy {
 
+  public enum FixtureType {
+    ROWBYROWCELL, ROWBYROWGLOBAL
+  }
+
   Fixture fixture;
   int maxDice = 0;
 
-  public FixtureCompiler(Fixture fixture) {
-    this.fixture = fixture;
+  public FixtureCompiler(FixtureType type) {
+    switch (type) {
+    case ROWBYROWCELL:
+      this.fixture = new Fixture(new File("C:\\Users\\Dreadhawk\\Desktop\\DiceServer\\resources\\fixture2.json"));
+      break;
+    case ROWBYROWGLOBAL:
+      this.fixture = new Fixture(new File("C:\\Users\\Dreadhawk\\Desktop\\DiceServer\\resources\\fixture1.json"));
+      break;
+    default:
+      throw new IllegalArgumentException("No such fixture type!");
+    }
     maxDice = fixture.getMaxDice();
   }
 
