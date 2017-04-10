@@ -19,7 +19,7 @@ public class SimpleCompiler implements BatchCompilerStrategy {
   @Override
   public DieBatch compile() {
     DieBatch batch = new DieBatch();
-    List<Die> batchDice = batch.dice;
+    List<Long> batchDice = batch.dice;
 
     // pool of diceJobs that aren't complete
     ArrayList<DieJob> dieJobs = new ArrayList<DieJob>();
@@ -31,15 +31,15 @@ public class SimpleCompiler implements BatchCompilerStrategy {
       DieJob job = dieJobs.get(i);
       // add dice from job until no more are required from the job or maxDice is hit
       for (; job.quantityLeft > 0 && numDice != maxDice; job.quantityLeft--) {
-        batchDice.add(job.die);
+        batchDice.add(job.die.id);
         Application.dieJobRepo.save(job);
       }
     }
-    batch.faces = getImages(new ArrayList<Die>(batch.dice));
+    batch.faces = getImages(new ArrayList<Long>(batch.dice));
     return batch;
   }
 
-  private ArrayList<Image> getImages(ArrayList<Die> dice) {
+  private ArrayList<Image> getImages(ArrayList<Long> dice) {
     int rows = 5;
     int cols = 5;
     ArrayList<Image> images = new ArrayList<Image>();
@@ -53,7 +53,7 @@ public class SimpleCompiler implements BatchCompilerStrategy {
       ImagePlus img = new ImagePlus("Side #" + k, b_img);
       for (int i = 0; i < rows; ++i)
         for (int j = 0; j < cols && (((i * rows) + j) < dice.size()); ++j) {
-          img.setImage(Utils.paste(img.getImage(), dice.get((i * rows) + j).getFace(k).getFace(), j * Die.innerSquare, i * Die.innerSquare));
+          img.setImage(Utils.paste(img.getImage(), Application.dieRepo.findOne(dice.get((i * rows) + j)).getFace(k).getFace(), j * Die.innerSquare, i * Die.innerSquare));
         }
       images.add(img.getImage());
     }

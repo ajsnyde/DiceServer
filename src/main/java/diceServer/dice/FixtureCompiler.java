@@ -6,8 +6,6 @@ import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
-import java.util.List;
-
 import diceServer.app.Application;
 import diceServer.app.Utils;
 import ij.ImagePlus;
@@ -24,10 +22,10 @@ public class FixtureCompiler implements BatchCompilerStrategy {
   public FixtureCompiler(FixtureType type) {
     switch (type) {
     case ROWBYROWCELL:
-      this.fixture = new Fixture(new File("C:\\Users\\Dreadhawk\\Desktop\\DiceServer\\resources\\fixture2.json"));
+      this.fixture = new Fixture(new File("C:\\Users\\Dreadhawk\\Desktop\\DiceServer\\resources\\fixture1.json"));
       break;
     case ROWBYROWGLOBAL:
-      this.fixture = new Fixture(new File("C:\\Users\\Dreadhawk\\Desktop\\DiceServer\\resources\\fixture1.json"));
+      this.fixture = new Fixture(new File("C:\\Users\\Dreadhawk\\Desktop\\DiceServer\\resources\\fixture2.json"));
       break;
     default:
       throw new IllegalArgumentException("No such fixture type!");
@@ -38,7 +36,7 @@ public class FixtureCompiler implements BatchCompilerStrategy {
   @Override
   public DieBatch compile() {
     DieBatch batch = new DieBatch();
-    List<Die> batchDice = batch.dice;
+    ArrayList<Long> batchDice = batch.dice;
 
     // pool of diceJobs that aren't complete
     ArrayList<DieJob> dieJobs = new ArrayList<DieJob>();
@@ -50,15 +48,15 @@ public class FixtureCompiler implements BatchCompilerStrategy {
       DieJob job = dieJobs.get(i);
       // add dice from job until no more are required from the job or maxDice is hit
       for (; job.quantityLeft > 0 && numDice != maxDice; job.quantityLeft--) {
-        batchDice.add(job.die);
+        batchDice.add(job.die.id);
         Application.dieJobRepo.save(job);
       }
     }
-    batch.faces = getImages(new ArrayList<Die>(batch.dice));
+    batch.faces = getImages(new ArrayList<Long>(batch.dice));
     return batch;
   }
 
-  private ArrayList<Image> getImages(ArrayList<Die> dice) {
+  private ArrayList<Image> getImages(ArrayList<Long> dice) {
     ArrayList<Image> images = new ArrayList<Image>();
 
     BufferedImage b_img = new BufferedImage(fixture.xSize, fixture.ySize, 1);
@@ -69,7 +67,7 @@ public class FixtureCompiler implements BatchCompilerStrategy {
     for (int k = 0; k < 6; k++) {
       ImagePlus img = new ImagePlus("Side #" + k, b_img);
       for (int i = 0; i < dice.size() && i < fixture.getMaxDice(); ++i)
-        img.setImage(Utils.paste(img.getImage(), dice.get(i).getFace(k).getFace(), fixture.positions.get(i).x, fixture.positions.get(i).y));
+        img.setImage(Utils.paste(img.getImage(), Application.dieRepo.findOne(dice.get(i)).getFace(k).getFace(), fixture.positions.get(i).x, fixture.positions.get(i).y));
       images.add(img.getImage());
     }
     return images;

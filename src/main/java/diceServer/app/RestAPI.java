@@ -20,10 +20,9 @@ import diceServer.dice.FixtureCompiler.FixtureType;
 
 @RestController
 public class RestAPI {
-
   String imgFormat = "PNG";
 
-  @RequestMapping(value = "/dietest", method = RequestMethod.GET, produces = "application/json")
+  @RequestMapping(value = "/die/", method = RequestMethod.GET, produces = "application/json")
   public Iterable<Die> getAllDice() {
     return Application.dieRepo.findAll();
   }
@@ -36,7 +35,7 @@ public class RestAPI {
   @GetMapping("/die/{id}/map")
   @ResponseBody
   public ResponseEntity<Resource> serveMap(@PathVariable long id) {
-    return Utils.serveIMG("die" + id, Application.dieRepo.findOne(id).getMap(), imgFormat);
+    return Utils.serveIMG("die" + id + "." + imgFormat, Application.dieRepo.findOne(id).getMap(), imgFormat);
   }
 
   @GetMapping("/die/{id}/face/{faceId}/face")
@@ -44,14 +43,29 @@ public class RestAPI {
   public ResponseEntity<Resource> serveFace(@PathVariable long id, @PathVariable int faceId) {
     Die die = Application.dieRepo.findOne(id);
     DieFace face = die.getFace(faceId);
-    return Utils.serveIMG("die" + id + "face" + faceId, face.getFace(), imgFormat);
+    return Utils.serveIMG("die" + id + "face" + faceId + "." + imgFormat, face.getFace(), imgFormat);
   }
 
-  @GetMapping("/diebatch/{id}/face/{faceId}")
+  @RequestMapping(value = "/face/{faceId}", method = RequestMethod.GET, produces = "application/json")
+  public DieFace getFace(@PathVariable long faceId) {
+    return Application.dieFaceRepo.findOne(faceId);
+  }
+
+  @GetMapping("/face/{faceId}/face")
   @ResponseBody
-  public ResponseEntity<Resource> serveDieBatchFace(@PathVariable long id, @PathVariable long faceId) {
-    DieBatch dieBatch = Application.dieBatchRepo.findOne(id);
-    return Utils.serveIMG("diebatch" + id + "face" + faceId, dieBatch.faces.get((int) faceId), imgFormat);
+  public ResponseEntity<Resource> serveFace(@PathVariable long faceId) {
+    DieFace face = Application.dieFaceRepo.findOne(faceId);
+    return Utils.serveIMG("face" + faceId + "." + imgFormat, face.getFace(), imgFormat);
+  }
+
+  @RequestMapping(value = "/diebatch/{id}", method = RequestMethod.GET, produces = "application/json")
+  public ResponseEntity<Resource> getBatch(@PathVariable long id) {
+    return Application.dieBatchRepo.findOne(id).zip("batch" + id + ".zip");
+  }
+
+  @RequestMapping(value = "/diebatch/", method = RequestMethod.GET, produces = "application/json")
+  public Iterable<DieBatch> getBatches(@PathVariable long id) {
+    return Application.dieBatchRepo.findAll();
   }
 
   @CrossOrigin(origins = "*")
@@ -69,10 +83,8 @@ public class RestAPI {
   @ResponseBody
   public ResponseEntity<Resource> serveImage() {
     DieBatch batch = new FixtureCompiler(FixtureType.ROWBYROWCELL).compile();
-    // Application.dieBatchRepo.save(batch);
-    // Batch saving is broken due to duplicate Die objects
-    batch.zip("dieBatch.zip");
-    return Utils.serveIMG("dieBatch", batch.faces.get(1), imgFormat);
+    Application.dieBatchRepo.save(batch);
+    return batch.zip("dieBatch" + batch.id + ".zip");
   }
 
 }
