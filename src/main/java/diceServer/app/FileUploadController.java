@@ -12,6 +12,7 @@ import com.stripe.model.Charge;
 
 import diceServer.dice.Die;
 import diceServer.dice.DieJob;
+import diceServer.dice.DieOrder;
 import diceServer.storage.StorageFileNotFoundException;
 import diceServer.storage.StorageService;
 
@@ -20,10 +21,26 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.util.Map;
 import javax.imageio.ImageIO;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 @Controller
 public class FileUploadController {
+
+  @RequestMapping("/cart")
+  public String cart(HttpSession session, Model model, @CookieValue(value = "diceServerSession", defaultValue = "NA") String cookie, HttpServletResponse response) {
+    // create cookie with session ID if there is no prior session. Otherwise, use existing cookie session ID for TODO: stuffs.
+    if (cookie == "NA")
+      response.addCookie(new Cookie("diceServerSession", session.getId()));
+    else {
+      System.out.println(session.getId());
+      if (Application.dieOrderRepo.findFirstBySessionId(session.getId()) == null)
+        System.out.println("No Cart Associated with sessionId");
+      model.addAttribute("cart", Application.dieOrderRepo.findFirstBySessionId(session.getId()));
+    }
+    return "cart";
+  }
 
   @Autowired
   public FileUploadController(StorageService storageService) {
@@ -74,25 +91,31 @@ public class FileUploadController {
   }
 
   @PostMapping("/Job")
-  public String createJob(@RequestParam("dieId") long dieId, @RequestParam("quantity") int quantity) {
+  public String createJob(HttpSession session, @RequestParam("dieId") long dieId, @RequestParam("quantity") int quantity, @CookieValue(value = "diceServerSession", defaultValue = "NA") String cookie,
+      HttpServletResponse response) {
     Die die = Application.dieRepo.findOne(dieId);
     if (die != null) {
       DieJob job = new DieJob(die, quantity);
-      Application.dieJobRepo.save(job);
+      if (cookie == "NA")
+        response.addCookie(new Cookie("diceServerSession", session.getId()));
+      // create new cart associated with sessionId if not existing
+      DieOrder order = Application.dieOrderRepo.findFirstBySessionId(session.getId());
+      if (order == null)
+        order = new DieOrder(session.getId());
+      order.jobs.add(job);
+      Application.dieOrderRepo.save(order);
+      System.out.println(order.getJobs().size());
+      Application.dieJobRepo.save(order.getJobs());
     } else
       throw new NullPointerException("Your die wasn't found!");
     return "redirect:/viewDie/" + die.id;
   }
 
   @PostMapping("/pay")
-  public String pay(@RequestParam Map<String, String> params, HttpSession session) {
-    session.setAttribute("session", new Session());
-    System.out.println(session.getAttribute("session"));
+  public String pay(HttpSession session, @RequestParam Map<String, String> params, @CookieValue(value = "cart", defaultValue = "newCart") String cookie, HttpServletResponse response) {
     System.out.println(params.get("stripeShippingAddressLine1"));
-
     Charge charge = Utils.charge(params.get("stripeToken"), Integer.parseInt(params.get("quantity")) * 300);
-    createJob(Long.parseLong(params.get("dieId")), Integer.parseInt(params.get("quantity")));
-
+    createJob(session, Long.parseLong(params.get("dieId")), Integer.parseInt(params.get("quantity")), cookie, response);
     return "redirect:/viewDie/" + params.get("dieId");
   }
 

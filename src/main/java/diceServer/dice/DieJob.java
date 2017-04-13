@@ -6,7 +6,6 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
@@ -24,8 +23,6 @@ public class DieJob implements OrderItem {
   @Column(name = "quantityLeft")
   public int quantityLeft;
   public double cost;
-  @ManyToOne(cascade = CascadeType.ALL)
-  private DieOrder order;
 
   public DieJob() {
     cost = 0;
@@ -40,5 +37,41 @@ public class DieJob implements OrderItem {
   @Override
   public double getCost() {
     return cost;
+  }
+
+  public Die getDie() {
+    return die;
+  }
+
+  public void setDie(Die die) {
+    this.die = die;
+  }
+
+  public long getId() {
+    return id;
+  }
+
+  public void setId(long id) {
+    this.id = id;
+  }
+
+  public int getQuantity() {
+    return quantity;
+  }
+
+  public void setQuantity(int quantity) {
+    this.quantity = quantity;
+  }
+
+  public int getQuantityLeft() {
+    return quantityLeft;
+  }
+
+  public void setQuantityLeft(int quantityLeft) {
+    this.quantityLeft = quantityLeft;
+  }
+
+  public void setCost(double cost) {
+    this.cost = cost;
   }
 }

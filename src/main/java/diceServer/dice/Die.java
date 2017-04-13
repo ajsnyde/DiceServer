@@ -22,7 +22,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import diceServer.app.Utils;
 
 @Entity
-@Table(name = "die")
+@Table(name = "Die")
 public class Die {
   static Die blank = null;
   @Id

@@ -15,6 +15,7 @@ import diceServer.dice.Die;
 import diceServer.dice.DieBatch;
 import diceServer.dice.DieFace;
 import diceServer.dice.DieJob;
+import diceServer.dice.DieOrder;
 import diceServer.dice.FixtureCompiler;
 import diceServer.dice.FixtureCompiler.FixtureType;
 
@@ -77,6 +78,11 @@ public class RestAPI {
   @RequestMapping(value = "/dieBatches", method = RequestMethod.GET, produces = "application/json")
   public Iterable<DieBatch> showDieBatches() {
     return Application.dieBatchRepo.findAll();
+  }
+
+  @RequestMapping(value = "/dieOrders", method = RequestMethod.GET, produces = "application/json")
+  public Iterable<DieOrder> showDieOrders() {
+    return Application.dieOrderRepo.findAll();
   }
 
   @GetMapping("/dieBatch")

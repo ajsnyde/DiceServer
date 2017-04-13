@@ -6,105 +6,21 @@
   <div class="container">
     <div class="row">
       <div class="col-lg-12">
-        <div id="editor">
-          <p id="coordinates">LOADING...</p>
-          <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
-          <script type="text/javascript">
-                        	Stripe.setPublishableKey('pk_test_tD7nrERdypFuqGQZKcjhSuMk');
-                            $(document).ready(function(){
-                                $("body").mousemove(function(event){
-                                document.getElementById("coordinates").innerHTML="Your mouse is at: ("+ event.pageX +"," + event.pageY+")";
-                                });
-                            });
-                        </script>
-          <script src="http://code.jquery.com/jquery-3.1.1.min.js"></script>
-          <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-          <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/84/three.js"></script>
-          <script type="text/javascript" src="https://js.stripe.com/v2/"></script>
-          <script th:inline="javascript">
-                            var camera, scene, renderer;
-                            var mesh;
-                            init();
-                            animate();
-                            var face1;
-                            function init() {
-                            	var mouseDown = 0;
-                            	var mouseDownX = 0;
-                        	    var mouseDownY = 0;
-                        	    
-                            	document.body.onmousedown = function() { 
-                            	    mouseDown = 1;
-                            	    mouseDownX = 0;
-                            	    mouseDownY = 0;
-                            	}
-                            	document.body.onmouseup = function() {
-                            	    mouseDown = 0;
-                            	}
-                            	THREE.ImageUtils.crossOrigin = '';
-                                width = 600;
-                                height = 600;
-                                camera = new THREE.PerspectiveCamera( 50, width / height, 1, 1000 );
-                                camera.position.z = 400;
-                                scene = new THREE.Scene();
-                                document.getElementById("coordinates").innerHTML="Die Id used is: "+ /*[[${id}]]*/;
-                                id = "" + /*[[${id}]]*/;
+        <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+        <script type="text/javascript">
+                  Stripe.setPublishableKey('pk_test_tD7nrERdypFuqGQZKcjhSuMk');
+                  $(document).ready(function() {
+                    $("body").mousemove(function(event) {
+                      document.getElementById("coordinates").innerHTML = "Your mouse is at: (" + event.pageX + "," + event.pageY + ")";
+                    });
+                  });
+                </script>
+        <script src="http://code.jquery.com/jquery-3.1.1.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/84/three.js"></script>
+        <script type="text/javascript" src="https://js.stripe.com/v2/"></script>
+        <div th:replace="fragments/3dCube :: 3dCube"></div>
 
-                               var materials = [];
-                               materials.push(new THREE.MeshBasicMaterial({
-                                       map: THREE.ImageUtils.loadTexture( "/die/"+id+"/face/3/face" )
-                                   }));
-                               materials.push(new THREE.MeshBasicMaterial({
-                                   map: THREE.ImageUtils.loadTexture( "/die/"+id+"/face/1/face")
-                               }));
-                               materials.push(new THREE.MeshBasicMaterial({
-                                   map: THREE.ImageUtils.loadTexture( "/die/"+id+"/face/2/face")
-                               }));
-                               materials.push(new THREE.MeshBasicMaterial({
-                                   map: THREE.ImageUtils.loadTexture( "/die/"+id+"/face/5/face")
-                               }));
-                               materials.push(new THREE.MeshBasicMaterial({
-                                   map: THREE.ImageUtils.loadTexture( "/die/"+id+"/face/4/face")
-                               }));
-                               materials.push(new THREE.MeshBasicMaterial({
-                                   map: THREE.ImageUtils.loadTexture( "/die/"+id+"/face/0/face")
-                               }));
-                               face1 = materials[1];
-                                dice = new THREE.Mesh(
-                                    new THREE.BoxGeometry( 200, 200, 200 ),
-                                    new THREE.MultiMaterial( materials ) );
-                                scene.add( dice );
-
-                                renderer = new THREE.WebGLRenderer();
-                                renderer.setPixelRatio( window.devicePixelRatio );
-                                renderer.setSize( width, height );
-                                document.getElementById("editor").appendChild( renderer.domElement );
-                                window.addEventListener( 'resize', onWindowResize, false );
-                                $("canvas").mousemove(function(e) {
-                                	if(mouseDown == 1){
-                                    	dice.rotation.x += (e.pageX-mouseDownX)/100;
-                                    	mouseDownX = e.pageX;
-                                    	dice.rotation.y += (e.pageY-mouseDownY)/100;
-                                    	mouseDownY = e.pageY;
-                                	}
-                                })
-                            }
-                            function onWindowResize() {
-                                camera.aspect = width / height;
-                                camera.updateProjectionMatrix();
-                                renderer.setSize( width, height );
-                            }
-                            function animate() {
-                                requestAnimationFrame( animate );
-                                renderer.render( scene, camera );
-                            }
-                            $(document).ready(function() {
-                              $('img').click(function(e) {
-                                var offset = $(this).offset();
-                                alert((e.pageX - offset.left) + "," + (e.pageY - offset.top));
-                              });
-                            });
-                        </script>
-        </div>
       </div>
       <img class="img" th:src="@{'/die/'+${id}+'/map'}" alt="" />
       <hr />
@@ -119,7 +35,8 @@
         DieId: <input type="text" name="dieId" th:value="${id}" /><br /> Quantity: <input id="quantity" type="number" min="16" max="500" step="1" name="quantity" th:value="16" /><br />
         <script src="https://checkout.stripe.com/checkout.js" class="stripe-button" data-key="pk_test_tD7nrERdypFuqGQZKcjhSuMk" data-amount="$42" data-name="Dice Server" data-description="Dice"
           data-image="https://stripe.com/img/documentation/checkout/marketplace.png" data-zip-code="true" data-billing-address="true" data-shipping-address="true" data-locale="auto">
-					</script>
+                  
+                </script>
       </form>
     </div>
   </div>

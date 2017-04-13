@@ -19,7 +19,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import diceServer.app.Utils;
 
 @Entity
-@Table(name = "dieface")
+@Table(name = "DieFace")
 public class DieFace {
   static DieFace blank = null;
 
