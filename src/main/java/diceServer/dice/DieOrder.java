@@ -23,16 +23,17 @@ public class DieOrder extends Order implements OrderItem {
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
   public long id;
-
-  public List<DieJob> jobs = new ArrayList<DieJob>();
+  public List<DieJob> jobs;
 
   // SessionId associated with this order (cart)
   private String sessionId;
 
   public DieOrder() {
+    jobs = new ArrayList<DieJob>();
   }
 
   public DieOrder(String session) {
+    jobs = new ArrayList<DieJob>();
     this.sessionId = session;
   }
 

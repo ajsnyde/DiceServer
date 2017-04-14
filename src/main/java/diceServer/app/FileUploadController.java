@@ -62,8 +62,9 @@ public class FileUploadController {
     return "help";
   }
 
-  @GetMapping("/viewDie/{id}")
-  public String showDice(@PathVariable String id, Model model) {
+  @GetMapping(value = "/viewDie/{id}")
+  public String showDice(@PathVariable String id, Model model, HttpServletResponse response) {
+    // response.addHeader("X-Frame-Options", "ALLOW-FROM http://localhost");
     model.addAttribute("id", id);
     return "viewDice";
   }

@@ -20,8 +20,8 @@ import diceServer.storage.StorageService;
 import diceServer.store.CustomerRepo;
 
 @SpringBootApplication
+@ComponentScan(basePackages = { "diceServer" })
 @EnableConfigurationProperties({ StorageProperties.class })
-@ComponentScan(basePackages = { "diceServer", "diceServer.app" })
 public class Application {
   StorageService storageService;
   public static DieRepo dieRepo;

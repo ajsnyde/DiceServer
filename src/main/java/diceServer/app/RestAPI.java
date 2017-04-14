@@ -75,6 +75,12 @@ public class RestAPI {
     return Application.dieJobRepo.findAll();
   }
 
+  @GetMapping("/dieJob/{id}/map")
+  @ResponseBody
+  public ResponseEntity<Resource> serveJobMap(@PathVariable long id) {
+    return serveMap(Application.dieJobRepo.findOne(id).getDie().id);
+  }
+
   @RequestMapping(value = "/dieBatches", method = RequestMethod.GET, produces = "application/json")
   public Iterable<DieBatch> showDieBatches() {
     return Application.dieBatchRepo.findAll();
