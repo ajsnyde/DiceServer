@@ -6,6 +6,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
@@ -23,6 +25,10 @@ public class DieJob implements OrderItem {
   @Column(name = "quantityLeft")
   public int quantityLeft;
   public double cost;
+
+  @ManyToOne(cascade = CascadeType.ALL) // - deletes entire order...
+  @JoinColumn
+  public DieOrder order;
 
   public DieJob() {
     cost = 0;

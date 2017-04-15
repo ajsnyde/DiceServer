@@ -35,8 +35,10 @@ public class FileUploadController {
       response.addCookie(new Cookie("diceServerSession", session.getId()));
     else {
       System.out.println(session.getId());
-      if (Application.dieOrderRepo.findFirstBySessionId(session.getId()) == null)
+      if (Application.dieOrderRepo.findFirstBySessionId(session.getId()) == null) {
         System.out.println("No Cart Associated with sessionId");
+        Application.dieOrderRepo.save(new DieOrder(session.getId()));
+      }
       model.addAttribute("cart", Application.dieOrderRepo.findFirstBySessionId(session.getId()));
     }
     return "cart";
@@ -64,9 +66,14 @@ public class FileUploadController {
 
   @GetMapping(value = "/viewDie/{id}")
   public String showDice(@PathVariable String id, Model model, HttpServletResponse response) {
-    // response.addHeader("X-Frame-Options", "ALLOW-FROM http://localhost");
     model.addAttribute("id", id);
     return "viewDice";
+  }
+
+  @GetMapping("/dieOrder/{id}/removeJob/{id2}")
+  public String removeJob(@PathVariable long id, @PathVariable long id2) {
+    Application.dieOrderRepo.findOne(id).removeJob(id2);
+    return "redirect:/cart/";
   }
 
   @PostMapping("/Upload")
@@ -92,8 +99,8 @@ public class FileUploadController {
   }
 
   @PostMapping("/Job")
-  public String createJob(HttpSession session, @RequestParam("dieId") long dieId, @RequestParam("quantity") int quantity, @CookieValue(value = "diceServerSession", defaultValue = "NA") String cookie,
-      HttpServletResponse response) {
+  public String createJob(HttpSession session, @RequestParam("redirect") String redirect, @RequestParam("dieId") long dieId, @RequestParam("quantity") int quantity,
+      @CookieValue(value = "diceServerSession", defaultValue = "NA") String cookie, HttpServletResponse response) {
     Die die = Application.dieRepo.findOne(dieId);
     if (die != null) {
       DieJob job = new DieJob(die, quantity);
@@ -105,19 +112,21 @@ public class FileUploadController {
         order = new DieOrder(session.getId());
       order.jobs.add(job);
       Application.dieOrderRepo.save(order);
-      System.out.println(order.getJobs().size());
       Application.dieJobRepo.save(order.getJobs());
     } else
       throw new NullPointerException("Your die wasn't found!");
-    return "redirect:/viewDie/" + die.id;
+    return "redirect:" + redirect;
   }
 
+  // Takes a single DieOrder Id and Stripe payment token.
   @PostMapping("/pay")
-  public String pay(HttpSession session, @RequestParam Map<String, String> params, @CookieValue(value = "cart", defaultValue = "newCart") String cookie, HttpServletResponse response) {
+  public String pay(HttpSession session, @RequestParam Map<String, String> params) {
     System.out.println(params.get("stripeShippingAddressLine1"));
-    Charge charge = Utils.charge(params.get("stripeToken"), Integer.parseInt(params.get("quantity")) * 300);
-    createJob(session, Long.parseLong(params.get("dieId")), Integer.parseInt(params.get("quantity")), cookie, response);
-    return "redirect:/viewDie/" + params.get("dieId");
+    DieOrder order = Application.dieOrderRepo.findAll().iterator().next();// Application.dieOrderRepo.findOne(Long.parseLong(params.get("dieOrderId")));
+    System.out.println("ORDER ID:" + params.get("dieOrderId") + " - #Jobs " + order.jobs.size() + " - Cost: " + order.getCost());
+    Charge charge = Utils.charge(params.get("stripeToken"), order);
+
+    return "/uploadForm";
   }
 
   @ExceptionHandler(StorageFileNotFoundException.class)
@@ -128,5 +137,9 @@ public class FileUploadController {
   @GetMapping("/badSession")
   public String badSession() {
     return "redirect:/";
+  }
+
+  public void checkSessionAndCart() {
+
   }
 }

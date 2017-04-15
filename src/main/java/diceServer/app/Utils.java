@@ -30,6 +30,8 @@ import com.stripe.exception.InvalidRequestException;
 import com.stripe.model.Charge;
 import com.stripe.net.RequestOptions;
 
+import diceServer.dice.DieOrder;
+import diceServer.dice.DieOrder.Type;
 import ij.ImagePlus;
 import ij.process.ImageProcessor;
 
@@ -101,23 +103,19 @@ public class Utils {
     return convFile;
   }
 
-  public static Charge charge(String token, int amount) {
-    return charge(token, amount, -1);
-  }
-
-  public static Charge charge(String token, int amount, long orderId) {
+  public static Charge charge(String token, DieOrder order) {
     Stripe.apiKey = "sk_test_KxLUHNW5j4SgB2IKOgRnGPwK"; // TEST ONLY - MUST BE REPLACED IN PROD
 
     Map<String, Object> chargeParams = new HashMap<String, Object>();
-    chargeParams.put("amount", amount);
+    chargeParams.put("amount", (int) (order.getCost() * 100));
     chargeParams.put("currency", "usd");
     chargeParams.put("description", "Charge for dice");
     chargeParams.put("source", token);
     Map<String, String> initialMetadata = new HashMap<String, String>();
-    if (orderId != -1)
-      initialMetadata.put("order_id", orderId + "");
+    initialMetadata.put("order_id", order.id + "");
     chargeParams.put("metadata", initialMetadata);
-
+    order.type = Type.PAIDFOR;
+    Application.dieOrderRepo.save(order);
     RequestOptions options = RequestOptions.builder().setIdempotencyKey(new BigInteger(130, new SecureRandom()).toString(32)).build();
 
     try {

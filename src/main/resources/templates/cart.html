@@ -18,10 +18,22 @@
   <div th:replace="fragments/navbar :: navbar"></div>
   <ul th:each="job : ${cart.jobs}">
     <li>
-      <p th:text="${job.id}+' - ' + 'Quantity: ' + ${job.quantity} + ' - cost: $' + ${job.cost}"></p>
-      <img th:src="'/dieJob/'+${job.id}+'/map'" th:href="'/dieJob/'+${job.id}+'/map'" th:alt="${job.id}" height="100" width="75"/>
+      <p th:text="${job.id}+' - ' + 'Quantity: ' + ${job.quantity} + ' - cost: $' + ${job.cost}"><a th:href="'/viewDie/'+${job.die.id}">View Die</a></p><img th:src="'/dieJob/'+${job.id}+'/map'" th:href="'/dieJob/'+${job.id}+'/map'" th:alt="${job.id}"
+      height="100" width="75" />
+      
+      <a th:href="'/dieOrder/'+${cart.id}+'/removeJob/'+${job.id}">Remove from cart</a>
     </li>
   </ul>
-  <p th:text="'Total Cost: $'+ ${cart.getCost()}"><b></b></p>
+  <p th:text="'Total Cost: $'+ ${cart.getCost()}">
+    <b></b>
+  </p>
+  <form action="/pay" method="POST">
+    <input type="hidden" name="dieOrderId" th:value="${cart.id}" />
+    <script src="https://checkout.stripe.com/checkout.js" class="stripe-button" data-key="pk_test_tD7nrERdypFuqGQZKcjhSuMk" th:data-amount="${cart.getCost()}" data-name="Dice Server"
+      th:data-description="'Dice Order #'+${cart.id}" data-image="https://stripe.com/img/documentation/checkout/marketplace.png" data-zip-code="true" data-billing-address="true"
+      data-shipping-address="true" data-locale="auto">
+          
+        </script>
+  </form>
 </body>
 </html>
