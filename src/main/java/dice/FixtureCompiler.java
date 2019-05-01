@@ -23,12 +23,12 @@ public class FixtureCompiler implements BatchCompilerStrategy {
   public FixtureCompiler(FixtureType type) {
     switch (type) {
     case ROWBYROWCELL:
-      this.fixture = new Fixture(new File("C:\\Users\\Dreadhawk\\Desktop\\DiceServer\\resources\\fixture1.json"));
+      this.fixture = new Fixture(new File("fixture1.json"));
       break;
     case ROWBYROWGLOBAL:
-      this.fixture = new Fixture(new File("C:\\Users\\Dreadhawk\\Desktop\\DiceServer\\resources\\fixture2.json"));
+      this.fixture = new Fixture(new File("fixture2.json"));
       break;
-    default:
+    default: 
       throw new IllegalArgumentException("No such fixture type!");
     }
     maxDice = fixture.getMaxDice();

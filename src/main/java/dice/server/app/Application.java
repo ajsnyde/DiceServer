@@ -63,6 +63,6 @@ public class Application {
 	public void restartStorage() {
 		storageService.deleteAll();
 		storageService.init();
-		System.out.println("DELETING");
+		System.out.println("DELETING all uploaded files");
 	}
 }
