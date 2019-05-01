@@ -9,20 +9,20 @@ import java.util.stream.Stream;
 
 public interface StorageService {
 
-  void init();
+	void init();
 
-  void store(MultipartFile file);
+	void store(MultipartFile file);
 
-  void store(String filename, byte[] bytes);
+	void store(String filename, byte[] bytes);
 
-  Stream<Path> loadAll();
+	Stream<Path> loadAll();
 
-  Path load(String filename);
+	Path load(String filename);
 
-  Resource loadAsResource(String filename);
+	Resource loadAsResource(String filename);
 
-  void deleteAll();
+	void deleteAll();
 
-  void store(File file);
+	void store(File file);
 
 }

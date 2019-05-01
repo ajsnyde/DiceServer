@@ -26,67 +26,67 @@ import dice.server.store.OrderItem;
 @Table(name = "DieOrder")
 public class DieOrder extends Order implements OrderItem {
 
-  public enum Type {
-    CART, PAIDFOR
-  }
+	public enum Type {
+		CART, PAIDFOR
+	}
 
-  @Id
-  @GeneratedValue(strategy = GenerationType.AUTO)
-  public long id;
-  @OneToMany(cascade = CascadeType.REMOVE)
-  @JoinColumn
-  public List<DieJob> jobs;
-  public Time lastAccessed;
-  @Enumerated(EnumType.STRING)
-  public Type type = Type.CART;
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	public long id;
+	@OneToMany(cascade = CascadeType.REMOVE)
+	@JoinColumn
+	public List<DieJob> jobs;
+	public Time lastAccessed;
+	@Enumerated(EnumType.STRING)
+	public Type type = Type.CART;
 
-  // SessionId associated with this order (cart)
-  private String sessionId;
+	// SessionId associated with this order (cart)
+	private String sessionId;
 
-  public DieOrder() {
-    jobs = new ArrayList<DieJob>();
-  }
+	public DieOrder() {
+		jobs = new ArrayList<DieJob>();
+	}
 
-  public DieOrder(String session) {
-    jobs = new ArrayList<DieJob>();
-    this.sessionId = session;
-  }
+	public DieOrder(String session) {
+		jobs = new ArrayList<DieJob>();
+		this.sessionId = session;
+	}
 
-  @Transient
-  public double getCost() {
-    return getJobs().stream().collect(Collectors.summingDouble(sc -> sc.getCost()));
-  }
+	@Transient
+	public double getCost() {
+		return getJobs().stream().collect(Collectors.summingDouble(sc -> sc.getCost()));
+	}
 
-  public String getSessionId() {
-    return sessionId;
-  }
+	public String getSessionId() {
+		return sessionId;
+	}
 
-  public void setSessionId(String sessionId) {
-    this.sessionId = sessionId;
-  }
+	public void setSessionId(String sessionId) {
+		this.sessionId = sessionId;
+	}
 
-  @Id
-  @GeneratedValue(strategy = GenerationType.AUTO)
-  long getId() {
-    return id;
-  }
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	long getId() {
+		return id;
+	}
 
-  void setId(long id) {
-    this.id = id;
-  }
+	void setId(long id) {
+		this.id = id;
+	}
 
-  @OneToMany(cascade = CascadeType.ALL)
-  @ElementCollection(targetClass = DieJob.class)
-  public List<DieJob> getJobs() {
-    return jobs;
-  }
+	@OneToMany(cascade = CascadeType.ALL)
+	@ElementCollection(targetClass = DieJob.class)
+	public List<DieJob> getJobs() {
+		return jobs;
+	}
 
-  public void setJobs(List<DieJob> jobs) {
-    this.jobs = jobs;
-  }
+	public void setJobs(List<DieJob> jobs) {
+		this.jobs = jobs;
+	}
 
-  public void removeJob(long id) {
-    jobs.removeIf((DieJob j) -> j.id == id);
-    Application.dieOrderRepo.save(this);
-  }
+	public void removeJob(long id) {
+		jobs.removeIf((DieJob j) -> j.id == id);
+		Application.dieOrderRepo.save(this);
+	}
 }

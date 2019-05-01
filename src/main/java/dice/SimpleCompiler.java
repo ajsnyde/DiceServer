@@ -13,50 +13,53 @@ import ij.ImagePlus;
 
 public class SimpleCompiler implements BatchCompilerStrategy {
 
-  // static might be a mistake here..
-  static int maxDice = 50;
+	// static might be a mistake here..
+	static int maxDice = 50;
 
-  @Override
-  public DieBatch compile() {
-    DieBatch batch = new DieBatch();
-    List<Long> batchDice = batch.dice;
+	@Override
+	public DieBatch compile() {
+		DieBatch batch = new DieBatch();
+		List<Long> batchDice = batch.dice;
 
-    // pool of diceJobs that aren't complete
-    ArrayList<DieJob> dieJobs = new ArrayList<DieJob>();
-    Application.dieJobRepo.findByCompletion().iterator().forEachRemaining(dieJobs::add);
+		// pool of diceJobs that aren't complete
+		ArrayList<DieJob> dieJobs = new ArrayList<DieJob>();
+		Application.dieJobRepo.findByCompletion().iterator().forEachRemaining(dieJobs::add);
 
-    int numDice = 0;
-    // go through jobs until no more are available or maxDice is hit - this latter clause is not redundant, and improves efficiency
-    for (int i = 0; i < dieJobs.size() && numDice != maxDice; ++i) {
-      DieJob job = dieJobs.get(i);
-      // add dice from job until no more are required from the job or maxDice is hit
-      for (; job.quantityLeft > 0 && numDice != maxDice; job.quantityLeft--) {
-        batchDice.add(job.die.id);
-        Application.dieJobRepo.save(job);
-      }
-    }
-    batch.faces = getImages(new ArrayList<Long>(batch.dice));
-    return batch;
-  }
+		int numDice = 0;
+		// go through jobs until no more are available or maxDice is hit - this latter
+		// clause is not redundant, and improves efficiency
+		for (int i = 0; i < dieJobs.size() && numDice != maxDice; ++i) {
+			DieJob job = dieJobs.get(i);
+			// add dice from job until no more are required from the job or maxDice is hit
+			for (; job.quantityLeft > 0 && numDice != maxDice; job.quantityLeft--) {
+				batchDice.add(job.die.id);
+				Application.dieJobRepo.save(job);
+			}
+		}
+		batch.faces = getImages(new ArrayList<Long>(batch.dice));
+		return batch;
+	}
 
-  private ArrayList<Image> getImages(ArrayList<Long> dice) {
-    int rows = 5;
-    int cols = 5;
-    ArrayList<Image> images = new ArrayList<Image>();
+	private ArrayList<Image> getImages(ArrayList<Long> dice) {
+		int rows = 5;
+		int cols = 5;
+		ArrayList<Image> images = new ArrayList<Image>();
 
-    BufferedImage b_img = new BufferedImage(Die.innerSquare * rows, Die.innerSquare * cols, 1);
-    Graphics2D graphics = b_img.createGraphics();
-    graphics.setPaint(new Color(255, 255, 255));
-    graphics.fillRect(0, 0, b_img.getWidth(), b_img.getHeight());
+		BufferedImage b_img = new BufferedImage(Die.innerSquare * rows, Die.innerSquare * cols, 1);
+		Graphics2D graphics = b_img.createGraphics();
+		graphics.setPaint(new Color(255, 255, 255));
+		graphics.fillRect(0, 0, b_img.getWidth(), b_img.getHeight());
 
-    for (int k = 0; k < 6; k++) {
-      ImagePlus img = new ImagePlus("Side #" + k, b_img);
-      for (int i = 0; i < rows; ++i)
-        for (int j = 0; j < cols && (((i * rows) + j) < dice.size()); ++j) {
-          img.setImage(Utils.paste(img.getImage(), Application.dieRepo.findOne(dice.get((i * rows) + j)).getFace(k).getFace(), j * Die.innerSquare, i * Die.innerSquare));
-        }
-      images.add(img.getImage());
-    }
-    return images;
-  }
+		for (int k = 0; k < 6; k++) {
+			ImagePlus img = new ImagePlus("Side #" + k, b_img);
+			for (int i = 0; i < rows; ++i)
+				for (int j = 0; j < cols && (((i * rows) + j) < dice.size()); ++j) {
+					img.setImage(Utils.paste(img.getImage(),
+							Application.dieRepo.findOne(dice.get((i * rows) + j)).getFace(k).getFace(),
+							j * Die.innerSquare, i * Die.innerSquare));
+				}
+			images.add(img.getImage());
+		}
+		return images;
+	}
 }

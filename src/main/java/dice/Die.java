@@ -24,79 +24,79 @@ import dice.server.app.Utils;
 @Entity
 @Table(name = "Die")
 public class Die {
-  static Die blank = null;
-  @Id
-  @GeneratedValue(strategy = GenerationType.AUTO)
-  public long id;
-  @OneToMany(cascade = CascadeType.ALL)
-  @ElementCollection(targetClass = DieFace.class)
-  private List<DieFace> faces = new ArrayList<DieFace>();
-  @Transient
-  @JsonIgnore
-  private Image map; // initial map file; should be tied to the mapBytes
-  @Lob
-  @JsonIgnore
-  private byte[] mapBytes;
-  public String color;
+	static Die blank = null;
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	public long id;
+	@OneToMany(cascade = CascadeType.ALL)
+	@ElementCollection(targetClass = DieFace.class)
+	private List<DieFace> faces = new ArrayList<DieFace>();
+	@Transient
+	@JsonIgnore
+	private Image map; // initial map file; should be tied to the mapBytes
+	@Lob
+	@JsonIgnore
+	private byte[] mapBytes;
+	public String color;
 
-  public static int innerSquare = 125;
-  public static int outerSquare = 157;
+	public static int innerSquare = 125;
+	public static int outerSquare = 157;
 
-  private Die() {
-    if (mapBytes != null)
-      map = Utils.ByteArrayToImage(mapBytes);
-  }
+	private Die() {
+		if (mapBytes != null)
+			map = Utils.ByteArrayToImage(mapBytes);
+	}
 
-  public Die(Image map) {
-    this.map = map;
-    faces.add(new DieFace(Utils.cutSquare(map, 176, 17, innerSquare)));
-    faces.add(new DieFace(Utils.cutSquare(map, 17, 176, innerSquare)));
-    faces.add(new DieFace(Utils.cutSquare(map, 176, 176, innerSquare)));
-    faces.add(new DieFace(Utils.cutSquare(map, 335, 176, innerSquare)));
-    faces.add(new DieFace(Utils.cutSquare(map, 176, 335, innerSquare)));
-    faces.add(new DieFace(Utils.cutSquare(map, 176, 494, innerSquare)));
-    color = "White";
-  }
+	public Die(Image map) {
+		this.map = map;
+		faces.add(new DieFace(Utils.cutSquare(map, 176, 17, innerSquare)));
+		faces.add(new DieFace(Utils.cutSquare(map, 17, 176, innerSquare)));
+		faces.add(new DieFace(Utils.cutSquare(map, 176, 176, innerSquare)));
+		faces.add(new DieFace(Utils.cutSquare(map, 335, 176, innerSquare)));
+		faces.add(new DieFace(Utils.cutSquare(map, 176, 335, innerSquare)));
+		faces.add(new DieFace(Utils.cutSquare(map, 176, 494, innerSquare)));
+		color = "White";
+	}
 
-  public Die(Image map, String color) {
-    this(map);
-    this.color = color;
-  }
+	public Die(Image map, String color) {
+		this(map);
+		this.color = color;
+	}
 
-  public void setMap(byte[] mapBytes) {
-    this.map = Utils.ByteArrayToImage(mapBytes);
-    this.mapBytes = mapBytes;
-  }
+	public void setMap(byte[] mapBytes) {
+		this.map = Utils.ByteArrayToImage(mapBytes);
+		this.mapBytes = mapBytes;
+	}
 
-  public void setMap(Image map) {
-    mapBytes = Utils.ImageToByteArray(map);
-    this.map = map;
-  }
+	public void setMap(Image map) {
+		mapBytes = Utils.ImageToByteArray(map);
+		this.map = map;
+	}
 
-  public Image getMap() {
-    if (map == null)
-      this.map = Utils.ByteArrayToImage(mapBytes);
-    return map;
-  }
+	public Image getMap() {
+		if (map == null)
+			this.map = Utils.ByteArrayToImage(mapBytes);
+		return map;
+	}
 
-  public DieFace getFace(int i) {
-    return faces.get(i);
-  }
+	public DieFace getFace(int i) {
+		return faces.get(i);
+	}
 
-  public List<DieFace> getFaces() {
-    return faces;
-  }
+	public List<DieFace> getFaces() {
+		return faces;
+	}
 
-  @Column(name = "mapBytes", nullable = true)
-  public byte[] getMapBytes() {
-    return mapBytes;
-  }
+	@Column(name = "mapBytes", nullable = true)
+	public byte[] getMapBytes() {
+		return mapBytes;
+	}
 
-  public static Die getBlank() {
-    if (blank == null) {
-      blank = new Die();
-      blank.faces = new ArrayList<DieFace>(Collections.nCopies(6, DieFace.blank));
-    }
-    return blank;
-  }
+	public static Die getBlank() {
+		if (blank == null) {
+			blank = new Die();
+			blank.faces = new ArrayList<DieFace>(Collections.nCopies(6, DieFace.blank));
+		}
+		return blank;
+	}
 }
