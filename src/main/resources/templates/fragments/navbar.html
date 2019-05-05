@@ -7,15 +7,15 @@
     <nav class="navbar navbar-default">
       <div class="container-fluid">
         <div class="navbar-header">
-          <a class="navbar-brand" href="/">Dice Server</a>
+          <a class="navbar-brand" th:href="@{/}">Dice Server</a>
         </div>
         <ul class="nav navbar-nav">
-          <li class="active"><a href="#">Home</a></li>
-          <li><a href="/uploadForm">Upload</a></li>
-          <li><a href="/help">Help and Documentation</a></li>
-          <li><a href="#">Contact</a></li>
-          <li><a href="/getBatch">Get Batch</a></li>
-          <li><a href="/cart">Cart</a></li>
+          <li class="active"><a th:href="@{/}">Home</a></li>
+          <li><a th:href="@{/uploadForm}">Upload</a></li>
+          <li><a th:href="@{/help}">Help and Documentation</a></li>
+          <li><a th:href="@{#}">Contact</a></li>
+          <li><a th:href="@{/getBatch}">Get Batch</a></li>
+          <li><a th:href="@{/cart}">Cart</a></li>
         </ul>
       </div>
     </nav>

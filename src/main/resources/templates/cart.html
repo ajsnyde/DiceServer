@@ -27,7 +27,7 @@
   <p th:text="'Total Cost: $'+ ${cart.getCost()}">
     <b></b>
   </p>
-  <form action="/pay" method="POST">
+  <form th:action="@{/pay}" method="POST">
     <input type="hidden" name="dieOrderId" th:value="${cart.id}" />
     <script src="https://checkout.stripe.com/checkout.js" class="stripe-button" data-key="pk_test_tD7nrERdypFuqGQZKcjhSuMk" th:data-amount="${cart.getCost()}" data-name="Dice Server"
       th:data-description="'Dice Order #'+${cart.id}" data-image="https://stripe.com/img/documentation/checkout/marketplace.png" data-zip-code="true" data-billing-address="true"
