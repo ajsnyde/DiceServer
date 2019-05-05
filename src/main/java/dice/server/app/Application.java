@@ -5,7 +5,9 @@ import java.text.SimpleDateFormat;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.web.support.SpringBootServletInitializer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
@@ -23,7 +25,7 @@ import dice.server.store.CustomerRepo;
 @SpringBootApplication
 @ComponentScan(basePackages = { "dice" })
 @EnableConfigurationProperties({ StorageProperties.class })
-public class Application {
+public class Application extends SpringBootServletInitializer {
 	StorageService storageService;
 	public static DieRepo dieRepo;
 	public static DieFaceRepo dieFaceRepo;
@@ -34,6 +36,11 @@ public class Application {
 
 	public static void main(String[] args) {
 		SpringApplication.run(Application.class, args);
+	}
+
+	@Override
+	protected SpringApplicationBuilder configure(SpringApplicationBuilder builder) {
+		return builder.sources(Application.class);
 	}
 
 	@Bean
@@ -47,7 +54,6 @@ public class Application {
 		customerRepo = crepo;
 		this.storageService = storageService;
 		return (args) -> {
-			restartStorage();
 		};
 	}
 
@@ -61,8 +67,8 @@ public class Application {
 
 	@Scheduled(fixedDelay = 86400000) // Delete all uploaded files every hour
 	public void restartStorage() {
+		System.out.println("DELETING all uploaded files");
 		storageService.deleteAll();
 		storageService.init();
-		System.out.println("DELETING all uploaded files");
 	}
 }

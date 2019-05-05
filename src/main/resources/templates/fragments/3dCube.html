@@ -34,25 +34,26 @@
                                 id = "" + /*[[${id}]]*/;
                                 document.getElementById("coordinates").innerHTML="Die Id used is: "+ id;
                                 
-
+                               var contextRoot = /*[[@{/}]]*/ '/';
+                               
                                var materials = [];
                                materials.push(new THREE.MeshBasicMaterial({
-                                       map: THREE.ImageUtils.loadTexture( "/die/"+id+"/face/3/face" )
+                                       map: THREE.ImageUtils.loadTexture( contextRoot + "die/"+id+"/face/3/face" )
                                    }));
                                materials.push(new THREE.MeshBasicMaterial({
-                                   map: THREE.ImageUtils.loadTexture( "/die/"+id+"/face/1/face")
+                                   map: THREE.ImageUtils.loadTexture( contextRoot + "die/"+id+"/face/1/face")
                                }));
                                materials.push(new THREE.MeshBasicMaterial({
-                                   map: THREE.ImageUtils.loadTexture( "/die/"+id+"/face/2/face")
+                                   map: THREE.ImageUtils.loadTexture( contextRoot + "die/"+id+"/face/2/face")
                                }));
                                materials.push(new THREE.MeshBasicMaterial({
-                                   map: THREE.ImageUtils.loadTexture( "/die/"+id+"/face/5/face")
+                                   map: THREE.ImageUtils.loadTexture( contextRoot + "die/"+id+"/face/5/face")
                                }));
                                materials.push(new THREE.MeshBasicMaterial({
-                                   map: THREE.ImageUtils.loadTexture( "/die/"+id+"/face/4/face")
+                                   map: THREE.ImageUtils.loadTexture( contextRoot + "die/"+id+"/face/4/face")
                                }));
                                materials.push(new THREE.MeshBasicMaterial({
-                                   map: THREE.ImageUtils.loadTexture( "/die/"+id+"/face/0/face")
+                                   map: THREE.ImageUtils.loadTexture( contextRoot + "die/"+id+"/face/0/face")
                                }));
                                face1 = materials[1];
                                 dice = new THREE.Mesh(

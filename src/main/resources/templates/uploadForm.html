@@ -3,7 +3,7 @@
 </head>
 <body>
   <div th:replace="fragments/navbar :: navbar"></div>
-  <form method="POST" enctype="multipart/form-data" action="/Upload">
+  <form method="POST" enctype="multipart/form-data" th:action="@{/Upload}">
     <div class="form-group">
       <label for="file">Upload Modified Die Template:</label> <input type="file" class="form-control" id="file" name="file" accept="image/*" /> <small id="emailHelp" class="form-text text-muted">File
         is recommended to be based from the provided <a href="/template.png">template</a>, in the form of a PNG. See <a href="/help">help</a> for details on acceptable uploads.
