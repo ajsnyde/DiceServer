@@ -69,7 +69,7 @@ public class FixtureCompiler implements BatchCompilerStrategy {
 		for (int k = 0; k < 6; k++) {
 			ImagePlus img = new ImagePlus("Side #" + k, b_img);
 			for (int i = 0; i < dice.size() && i < fixture.getMaxDice(); ++i)
-				img.setImage(Utils.paste(img.getImage(), Application.dieRepo.findOne(dice.get(i)).getFace(k).getFace(),
+				img.setImage(Utils.paste(img.getImage(), Utils.ByteArrayToImage(Application.storageService.get("dieFaces/" + Application.dieRepo.findOne(dice.get(i)).getFace(k).id + ".png")),
 						fixture.positions.get(i).x, fixture.positions.get(i).y));
 			images.add(img.getImage());
 		}

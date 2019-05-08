@@ -117,28 +117,25 @@ public class Utils {
 		chargeParams.put("metadata", initialMetadata);
 		order.type = Type.PAIDFOR;
 		Application.dieOrderRepo.save(order);
-		RequestOptions options = RequestOptions.builder()
-				.setIdempotencyKey(new BigInteger(130, new SecureRandom()).toString(32)).build();
+		RequestOptions options = RequestOptions.builder().setIdempotencyKey(new BigInteger(130, new SecureRandom()).toString(32)).build();
 
 		try {
 			return Charge.create(chargeParams, options);
-		} catch (AuthenticationException | InvalidRequestException | APIConnectionException | CardException
-				| APIException e) {
+		} catch (AuthenticationException | InvalidRequestException | APIConnectionException | CardException | APIException e) {
 			e.printStackTrace();
 		}
 		return null;
 	}
 
-	public static ResponseEntity<Resource> serveIMG(String filename, Image image, String format) {
+	public static ResponseEntity<Resource> serveIMG(String filename, byte[] fileBytes, String format) {
+		Image image = ByteArrayToImage(fileBytes);
 		try {
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			ImageIO.write(Utils.ImageToBufferedImage(image), format, baos);
 			baos.flush();
 			byte[] imageInByte = baos.toByteArray();
 			baos.close();
-			return ResponseEntity.ok()
-					.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + filename + "\"")
-					.body(new ByteArrayResource(imageInByte));
+			return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + filename + "\"").body(new ByteArrayResource(imageInByte));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

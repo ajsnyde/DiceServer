@@ -1,15 +1,13 @@
 package dice.server.app;
 
-import java.awt.Image;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.util.Map;
 
-import javax.imageio.ImageIO;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.h2.util.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -35,13 +33,14 @@ import dice.server.storage.StorageFileNotFoundException;
 
 @Controller
 public class FileUploadController {
+
+	static final int MAX_FILE_SIZE_READ_BYTES = 1024 * 1024 * 10;
+
 	@Autowired
 	DieFactory dieFactory;
 
 	@RequestMapping("/cart")
-	public String cart(HttpSession session, Model model,
-			@CookieValue(value = "diceServerSession", defaultValue = "NA") String cookie,
-			HttpServletResponse response) {
+	public String cart(HttpSession session, Model model, @CookieValue(value = "diceServerSession", defaultValue = "NA") String cookie, HttpServletResponse response) {
 		// create cookie with session ID if there is no prior session. Otherwise, use
 		// existing cookie session ID for TODO: stuffs.
 		if (cookie == "NA")
@@ -92,17 +91,13 @@ public class FileUploadController {
 	@PostMapping("/Upload")
 	public String fileUploadToDie(@RequestParam("file") MultipartFile file, RedirectAttributes redirectAttributes) {
 
-		dieFactory.testService();
-
 		Die die = null;
 		try {
-			Image image = ImageIO.read(file.getInputStream());
-			die = new Die(image);
-			die.setMap(Files.readAllBytes(Utils.convert(file).toPath()));
-			die.setMap(Utils.ByteArrayToImage(Files.readAllBytes(Utils.convert(file).toPath())));
+			die = dieFactory.createDieFromTemplate(IOUtils.readBytesAndClose(file.getInputStream(), MAX_FILE_SIZE_READ_BYTES));
+			Application.dieTemplateRepo.save(die.getDieTemplate());
 			Application.dieRepo.save(die);
 			Application.dieFaceRepo.save(die.getFaces());
-			System.out.println(die.getMapBytes().hashCode());
+			System.out.println("Newly created dieId: " + die.id);
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		}
@@ -115,10 +110,8 @@ public class FileUploadController {
 	}
 
 	@PostMapping("/Job")
-	public String createJob(HttpSession session, @RequestParam("redirect") String redirect,
-			@RequestParam("dieId") long dieId, @RequestParam("quantity") int quantity,
-			@CookieValue(value = "diceServerSession", defaultValue = "NA") String cookie,
-			HttpServletResponse response) {
+	public String createJob(HttpSession session, @RequestParam("redirect") String redirect, @RequestParam("dieId") long dieId, @RequestParam("quantity") int quantity,
+			@CookieValue(value = "diceServerSession", defaultValue = "NA") String cookie, HttpServletResponse response) {
 		Die die = Application.dieRepo.findOne(dieId);
 		if (die != null) {
 			DieJob job = new DieJob(die, quantity);
@@ -141,8 +134,7 @@ public class FileUploadController {
 	public String pay(HttpSession session, @RequestParam Map<String, String> params) {
 		System.out.println(params.get("stripeShippingAddressLine1"));
 		DieOrder order = Application.dieOrderRepo.findAll().iterator().next();// Application.dieOrderRepo.findOne(Long.parseLong(params.get("dieOrderId")));
-		System.out.println("ORDER ID:" + params.get("dieOrderId") + " - #Jobs " + order.jobs.size() + " - Cost: "
-				+ order.getCost());
+		System.out.println("ORDER ID:" + params.get("dieOrderId") + " - #Jobs " + order.jobs.size() + " - Cost: " + order.getCost());
 		Charge charge = Utils.charge(params.get("stripeToken"), order);
 
 		return "/uploadForm";

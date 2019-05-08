@@ -17,14 +17,16 @@ import dice.DieFaceRepo;
 import dice.DieJobRepo;
 import dice.DieOrderRepo;
 import dice.DieRepo;
+import dice.DieTemplateRepo;
 import dice.server.storage.AWSFileSystemStorageService;
 import dice.server.store.CustomerRepo;
 
 @SpringBootApplication
 @ComponentScan(basePackages = { "dice" })
 public class Application extends SpringBootServletInitializer {
-	AWSFileSystemStorageService storageService;
+	public static AWSFileSystemStorageService storageService;
 	public static DieRepo dieRepo;
+	public static DieTemplateRepo dieTemplateRepo;
 	public static DieFaceRepo dieFaceRepo;
 	public static DieJobRepo dieJobRepo;
 	public static DieBatchRepo dieBatchRepo;
@@ -41,15 +43,15 @@ public class Application extends SpringBootServletInitializer {
 	}
 
 	@Bean
-	CommandLineRunner init(AWSFileSystemStorageService storageService, DieRepo repository, DieFaceRepo dfrepository,
-			DieJobRepo djrepository, DieBatchRepo dbrepository, DieOrderRepo dorepo, CustomerRepo crepo) {
+	CommandLineRunner init(AWSFileSystemStorageService storageService, DieRepo repository, DieTemplateRepo dieTemplateRepo, DieFaceRepo dfrepository, DieJobRepo djrepository,
+			DieBatchRepo dbrepository, DieOrderRepo dorepo, CustomerRepo crepo) {
 		dieRepo = repository;
 		dieFaceRepo = dfrepository;
 		dieJobRepo = djrepository;
 		dieBatchRepo = dbrepository;
 		dieOrderRepo = dorepo;
 		customerRepo = crepo;
-		this.storageService = storageService;
+		Application.storageService = storageService;
 		return (args) -> {
 		};
 	}

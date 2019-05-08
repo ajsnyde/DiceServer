@@ -36,8 +36,8 @@ public class RestAPI {
 
 	@GetMapping("/die/{id}/map")
 	@ResponseBody
-	public ResponseEntity<Resource> serveMap(@PathVariable long id) {
-		return Utils.serveIMG("die" + id + "." + imgFormat, Application.dieRepo.findOne(id).getMap(), imgFormat);
+	public ResponseEntity<Resource> serveMap(@PathVariable long templateId) {
+		return Utils.serveIMG("die" + templateId + "." + imgFormat, Application.storageService.get("templates/" + templateId + ".png"), imgFormat);
 	}
 
 	@GetMapping("/die/{id}/face/{faceId}/face")
@@ -45,7 +45,7 @@ public class RestAPI {
 	public ResponseEntity<Resource> serveFace(@PathVariable long id, @PathVariable int faceId) {
 		Die die = Application.dieRepo.findOne(id);
 		DieFace face = die.getFace(faceId);
-		return Utils.serveIMG("die" + id + "face" + faceId + "." + imgFormat, face.getFace(), imgFormat);
+		return Utils.serveIMG("die" + id + "face" + faceId + "." + imgFormat, Application.storageService.get("dieFaces/" + face.id + ".png"), imgFormat);
 	}
 
 	@RequestMapping(value = "/face/{faceId}", method = RequestMethod.GET, produces = "application/json")
@@ -57,7 +57,7 @@ public class RestAPI {
 	@ResponseBody
 	public ResponseEntity<Resource> serveFace(@PathVariable long faceId) {
 		DieFace face = Application.dieFaceRepo.findOne(faceId);
-		return Utils.serveIMG("face" + faceId + "." + imgFormat, face.getFace(), imgFormat);
+		return Utils.serveIMG("face" + faceId + "." + imgFormat, Application.storageService.get("dieFaces/" + face.id + ".png"), imgFormat);
 	}
 
 	@RequestMapping(value = "/diebatch/{id}", method = RequestMethod.GET, produces = "application/json")

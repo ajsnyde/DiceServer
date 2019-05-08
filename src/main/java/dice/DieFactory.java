@@ -1,9 +1,11 @@
 package dice;
 
+import java.awt.Color;
 import java.awt.Image;
+import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.List;
 
 import javax.imageio.ImageIO;
 
@@ -21,32 +23,48 @@ public class DieFactory {
 
 	public static int innerSquareLength = 125;
 	public static int outerSquareLength = 157;
+	public static int[] templateXValues = { 176, 17, 176, 335, 176, 176 };
+	public static int[] templateYValues = { 17, 176, 176, 176, 335, 494 };
 
 	private DieFactory() {
 	}
 
-	public void createDieFromTemplate(byte[] file) {
+	public Die createDieFromTemplate(byte[] file) {
 		try {
+			Image template = ImageIO.read(new ByteArrayInputStream(file));
+			DieTemplate dieTemplate = new DieTemplate();
+			storageService.put("templates/" + dieTemplate.id + ".png", file);
 
-			Image image = ImageIO.read(new ByteArrayInputStream(file));
-			storageService.put("templates/generatedNameTiedToDatabaseObjectDieTemplateId.png", file);
-			storageService.put("dieFaces/generatedNameTiedToDatabaseObjectDieFaceId.png",
-					Utils.ImageToByteArray(Utils.cutSquare(image, 176, 17, innerSquareLength)));
-			storageService.put("dieFaces/generatedNameTiedToDatabaseObjectDieFaceId.png",
-					Utils.ImageToByteArray(Utils.cutSquare(image, 17, 176, innerSquareLength)));
-			storageService.put("dieFaces/generatedNameTiedToDatabaseObjectDieFaceId.png",
-					Utils.ImageToByteArray(Utils.cutSquare(image, 176, 176, innerSquareLength)));
-			storageService.put("dieFaces/generatedNameTiedToDatabaseObjectDieFaceId.png",
-					Utils.ImageToByteArray(Utils.cutSquare(image, 335, 176, innerSquareLength)));
-			storageService.put("dieFaces/generatedNameTiedToDatabaseObjectDieFaceId.png",
-					Utils.ImageToByteArray(Utils.cutSquare(image, 176, 335, innerSquareLength)));
-			storageService.put("dieFaces/generatedNameTiedToDatabaseObjectDieFaceId.png",
-					Utils.ImageToByteArray(Utils.cutSquare(image, 176, 494, innerSquareLength)));
+			Die die = new Die();
+			die.setDieTemplate(dieTemplate);
+			List<DieFace> faces = die.getFaces();
 
-			ArrayList<DieFace> faces = new ArrayList<DieFace>();
+			for (int i = 0; i < 5; i++) {
+				DieFace face = new DieFace();
+				faces.add(face);
+				storageService.put("dieFaces/" + face.id + ".png", Utils.ImageToByteArray(isolateDieFace(template, templateXValues[i], templateYValues[i])));
+			}
+			return die;
+
 		} catch (IOException e) {
 			e.printStackTrace();
+			throw new DieFactoryException("Couldn't create die: " + e.getLocalizedMessage());
 		}
+	}
+
+	// takes a template, cuts out the square provided, centers it on a proper sized
+	// square
+	public Image isolateDieFace(Image source, int x, int y) {
+		Image innerFace = Utils.cutSquare(source, x, y, innerSquareLength);
+		return sanitizeDieFace(innerFace);
+	}
+
+	// takes an inner face and pastes it (centered) onto a proper size square
+	public Image sanitizeDieFace(Image face) {
+		BufferedImage blank = new BufferedImage(Die.outerSquare, Die.outerSquare, BufferedImage.TYPE_3BYTE_BGR);
+		blank.getGraphics().setColor(new Color(255, 255, 255));
+		blank.getGraphics().fillRect(0, 0, Die.outerSquare, Die.outerSquare);
+		return Utils.paste(blank, face, (Die.outerSquare - Die.innerSquare) / 2, (Die.outerSquare - Die.innerSquare) / 2);
 	}
 
 	public void testService() {

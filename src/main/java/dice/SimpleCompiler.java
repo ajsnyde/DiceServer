@@ -55,8 +55,9 @@ public class SimpleCompiler implements BatchCompilerStrategy {
 			for (int i = 0; i < rows; ++i)
 				for (int j = 0; j < cols && (((i * rows) + j) < dice.size()); ++j) {
 					img.setImage(Utils.paste(img.getImage(),
-							Application.dieRepo.findOne(dice.get((i * rows) + j)).getFace(k).getFace(),
-							j * Die.innerSquare, i * Die.innerSquare));
+							Utils.ByteArrayToImage(Application.storageService.get("dieFaces/" + Application.dieRepo.findOne(dice.get(i * rows) + j).getFace(k).id + ".png")), j * Die.innerSquare,
+							i * Die.innerSquare));
+
 				}
 			images.add(img.getImage());
 		}
