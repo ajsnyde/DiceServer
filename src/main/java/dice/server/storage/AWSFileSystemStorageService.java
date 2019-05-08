@@ -40,20 +40,13 @@ public class AWSFileSystemStorageService {
 		init();
 	}
 
-	// key is essentially a filepath (ex. 'foo/bar/test')
+	// key is essentially a filepath (ex. 'foo/bar/test.foo')
 	public void put(String key, byte[] bytes) {
 		try (ByteArrayInputStream is = new ByteArrayInputStream(bytes)) {
-			s3.putObject(bucketName, key, is, new ObjectMetadata());
+			ObjectMetadata metadata = new ObjectMetadata();
+			metadata.setContentLength(bytes.length);
+			s3.putObject(bucketName, key, is, metadata);
 		} catch (AmazonServiceException | IOException e) {
-			throw new StorageException("Failed to store object in AWS S3 Bucket: " + e.getLocalizedMessage());
-		}
-	}
-
-	// key is essentially a filepath (ex. 'foo/bar/test')
-	public void put(String key, InputStream is) {
-		try {
-			s3.putObject(bucketName, key, is, new ObjectMetadata());
-		} catch (AmazonServiceException e) {
 			throw new StorageException("Failed to store object in AWS S3 Bucket: " + e.getLocalizedMessage());
 		}
 	}

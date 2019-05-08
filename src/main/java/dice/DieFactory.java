@@ -34,6 +34,7 @@ public class DieFactory {
 		try {
 			Image template = ImageIO.read(new ByteArrayInputStream(file));
 			DieTemplate dieTemplate = new DieTemplate();
+			Application.dieTemplateRepo.save(dieTemplate);
 			storageService.put("templates/" + dieTemplate.id + ".png", file);
 
 			Die die = new Die();
@@ -62,7 +63,7 @@ public class DieFactory {
 
 	// takes an inner face and pastes it (centered) onto a proper size square
 	public Image sanitizeDieFace(Image face) {
-		BufferedImage blank = new BufferedImage(Die.outerSquare, Die.outerSquare, BufferedImage.TYPE_3BYTE_BGR);
+		BufferedImage blank = new BufferedImage(Die.outerSquare, Die.outerSquare, BufferedImage.TYPE_BYTE_BINARY);
 		blank.getGraphics().setColor(new Color(255, 255, 255));
 		blank.getGraphics().fillRect(0, 0, Die.outerSquare, Die.outerSquare);
 		return Utils.paste(blank, face, (Die.outerSquare - Die.innerSquare) / 2, (Die.outerSquare - Die.innerSquare) / 2);
