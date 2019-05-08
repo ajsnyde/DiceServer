@@ -25,7 +25,7 @@ public class AWSFileSystemStorageService {
 
 	final AmazonS3 s3;
 	final String bucketName;
-	final int MAX_FILE_SIZE_READ = 10485760;
+	static final int MAX_FILE_SIZE_READ_BYTES = 1024 * 1024 * 10;
 
 	@Autowired
 	public AWSFileSystemStorageService() {
@@ -49,6 +49,15 @@ public class AWSFileSystemStorageService {
 		}
 	}
 
+	// key is essentially a filepath (ex. 'foo/bar/test')
+	public void put(String key, InputStream is) {
+		try {
+			s3.putObject(bucketName, key, is, new ObjectMetadata());
+		} catch (AmazonServiceException e) {
+			throw new StorageException("Failed to store object in AWS S3 Bucket: " + e.getLocalizedMessage());
+		}
+	}
+
 	public List<String> getKeys() {
 		try {
 			ObjectListing listing = s3.listObjects(bucketName);
@@ -64,7 +73,7 @@ public class AWSFileSystemStorageService {
 			throw new StorageFileNotFoundException("File does not exist");
 
 		try (InputStream is = s3.getObject(bucketName, key).getObjectContent()) {
-			return IOUtils.readBytesAndClose(is, MAX_FILE_SIZE_READ);
+			return IOUtils.readBytesAndClose(is, MAX_FILE_SIZE_READ_BYTES);
 		} catch (SdkClientException | IOException e) {
 			throw new StorageException("Failed to get file: " + e.getLocalizedMessage());
 		}

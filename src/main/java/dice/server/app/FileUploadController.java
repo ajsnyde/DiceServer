@@ -27,6 +27,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.stripe.model.Charge;
 
 import dice.Die;
+import dice.DieFactory;
 import dice.DieJob;
 import dice.DieOrder;
 import dice.server.storage.AWSFileSystemStorageService;
@@ -34,6 +35,8 @@ import dice.server.storage.StorageFileNotFoundException;
 
 @Controller
 public class FileUploadController {
+	@Autowired
+	DieFactory dieFactory;
 
 	@RequestMapping("/cart")
 	public String cart(HttpSession session, Model model,
@@ -88,9 +91,12 @@ public class FileUploadController {
 
 	@PostMapping("/Upload")
 	public String fileUploadToDie(@RequestParam("file") MultipartFile file, RedirectAttributes redirectAttributes) {
+
+		dieFactory.testService();
+
 		Die die = null;
 		try {
-			Image image = ImageIO.read(Utils.convert(file));
+			Image image = ImageIO.read(file.getInputStream());
 			die = new Die(image);
 			die.setMap(Files.readAllBytes(Utils.convert(file).toPath()));
 			die.setMap(Utils.ByteArrayToImage(Files.readAllBytes(Utils.convert(file).toPath())));

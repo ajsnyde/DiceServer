@@ -62,7 +62,7 @@ public class Utils {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		byte[] imageInByte = null;
 		try {
-			ImageIO.write(originalImage, "bmp", baos);
+			ImageIO.write(originalImage, "png", baos);
 			baos.flush();
 			imageInByte = baos.toByteArray();
 			baos.close();
