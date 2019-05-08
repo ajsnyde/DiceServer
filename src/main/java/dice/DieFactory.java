@@ -12,6 +12,7 @@ import javax.imageio.ImageIO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import dice.server.app.Application;
 import dice.server.app.Utils;
 import dice.server.storage.AWSFileSystemStorageService;
 
@@ -38,9 +39,9 @@ public class DieFactory {
 			Die die = new Die();
 			die.setDieTemplate(dieTemplate);
 			List<DieFace> faces = die.getFaces();
-
-			for (int i = 0; i < 5; i++) {
+			for (int i = 0; i < 6; i++) {
 				DieFace face = new DieFace();
+				Application.dieFaceRepo.save(face);
 				faces.add(face);
 				storageService.put("dieFaces/" + face.id + ".png", Utils.ImageToByteArray(isolateDieFace(template, templateXValues[i], templateYValues[i])));
 			}

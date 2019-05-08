@@ -43,15 +43,16 @@ public class Application extends SpringBootServletInitializer {
 	}
 
 	@Bean
-	CommandLineRunner init(AWSFileSystemStorageService storageService, DieRepo repository, DieTemplateRepo dieTemplateRepo, DieFaceRepo dfrepository, DieJobRepo djrepository,
-			DieBatchRepo dbrepository, DieOrderRepo dorepo, CustomerRepo crepo) {
+	CommandLineRunner init(AWSFileSystemStorageService ss, DieRepo repository, DieTemplateRepo dtrepository, DieFaceRepo dfrepository, DieJobRepo djrepository, DieBatchRepo dbrepository,
+			DieOrderRepo dorepo, CustomerRepo crepo) {
 		dieRepo = repository;
+		dieTemplateRepo = dtrepository;
 		dieFaceRepo = dfrepository;
 		dieJobRepo = djrepository;
 		dieBatchRepo = dbrepository;
 		dieOrderRepo = dorepo;
 		customerRepo = crepo;
-		Application.storageService = storageService;
+		storageService = ss;
 		return (args) -> {
 		};
 	}

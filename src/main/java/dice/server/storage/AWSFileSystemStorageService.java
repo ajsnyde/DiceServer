@@ -70,7 +70,7 @@ public class AWSFileSystemStorageService {
 
 	public byte[] get(String key) {
 		if (!s3.doesObjectExist(bucketName, key))
-			throw new StorageFileNotFoundException("File does not exist");
+			throw new StorageFileNotFoundException("File does not exist: " + key);
 
 		try (InputStream is = s3.getObject(bucketName, key).getObjectContent()) {
 			return IOUtils.readBytesAndClose(is, MAX_FILE_SIZE_READ_BYTES);

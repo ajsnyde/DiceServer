@@ -94,9 +94,7 @@ public class FileUploadController {
 		Die die = null;
 		try {
 			die = dieFactory.createDieFromTemplate(IOUtils.readBytesAndClose(file.getInputStream(), MAX_FILE_SIZE_READ_BYTES));
-			Application.dieTemplateRepo.save(die.getDieTemplate());
 			Application.dieRepo.save(die);
-			Application.dieFaceRepo.save(die.getFaces());
 			System.out.println("Newly created dieId: " + die.id);
 		} catch (IOException e1) {
 			e1.printStackTrace();
