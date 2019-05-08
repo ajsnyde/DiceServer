@@ -6,7 +6,6 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.web.support.SpringBootServletInitializer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -18,15 +17,13 @@ import dice.DieFaceRepo;
 import dice.DieJobRepo;
 import dice.DieOrderRepo;
 import dice.DieRepo;
-import dice.server.storage.StorageProperties;
-import dice.server.storage.StorageService;
+import dice.server.storage.AWSFileSystemStorageService;
 import dice.server.store.CustomerRepo;
 
 @SpringBootApplication
 @ComponentScan(basePackages = { "dice" })
-@EnableConfigurationProperties({ StorageProperties.class })
 public class Application extends SpringBootServletInitializer {
-	StorageService storageService;
+	AWSFileSystemStorageService storageService;
 	public static DieRepo dieRepo;
 	public static DieFaceRepo dieFaceRepo;
 	public static DieJobRepo dieJobRepo;
@@ -44,7 +41,7 @@ public class Application extends SpringBootServletInitializer {
 	}
 
 	@Bean
-	CommandLineRunner init(StorageService storageService, DieRepo repository, DieFaceRepo dfrepository,
+	CommandLineRunner init(AWSFileSystemStorageService storageService, DieRepo repository, DieFaceRepo dfrepository,
 			DieJobRepo djrepository, DieBatchRepo dbrepository, DieOrderRepo dorepo, CustomerRepo crepo) {
 		dieRepo = repository;
 		dieFaceRepo = dfrepository;
@@ -69,6 +66,5 @@ public class Application extends SpringBootServletInitializer {
 	public void restartStorage() {
 		System.out.println("DELETING all uploaded files");
 		storageService.deleteAll();
-		storageService.init();
 	}
 }
