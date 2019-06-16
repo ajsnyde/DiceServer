@@ -57,3 +57,4 @@ local.properties
 /target/
 /*.bmp
 /target
+/logs/spring-boot-logger-log4j2.log
