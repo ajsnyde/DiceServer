@@ -7,6 +7,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.h2.util.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,6 +28,8 @@ public class AWSFileSystemStorageService {
 	final AmazonS3 s3;
 	final String bucketName;
 	static final int MAX_FILE_SIZE_READ_BYTES = 1024 * 1024 * 10;
+
+	private static Logger logger = LogManager.getLogger(AWSFileSystemStorageService.class);
 
 	@Autowired
 	public AWSFileSystemStorageService() {
@@ -107,7 +111,7 @@ public class AWSFileSystemStorageService {
 			// Verify that the bucket was created by retrieving it and checking its
 			// location.
 			String bucketLocation = s3.getBucketLocation(new GetBucketLocationRequest(bucketName));
-			System.out.println("Bucket location: " + bucketLocation);
+			logger.info("Bucket location: " + bucketLocation);
 		}
 	}
 }

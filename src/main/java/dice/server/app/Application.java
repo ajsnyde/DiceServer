@@ -2,6 +2,8 @@ package dice.server.app;
 
 import java.text.SimpleDateFormat;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -32,6 +34,8 @@ public class Application extends SpringBootServletInitializer {
 	public static DieBatchRepo dieBatchRepo;
 	public static DieOrderRepo dieOrderRepo;
 	public static CustomerRepo customerRepo;
+
+	private static Logger logger = LogManager.getLogger(Application.class);
 
 	public static void main(String[] args) {
 		SpringApplication.run(Application.class, args);
@@ -67,7 +71,7 @@ public class Application extends SpringBootServletInitializer {
 
 	@Scheduled(fixedDelay = 86400000) // Delete all uploaded files every hour
 	public void restartStorage() {
-		System.out.println("DELETING all uploaded files");
+		logger.info("DELETING all uploaded files");
 		storageService.deleteAll();
 	}
 }

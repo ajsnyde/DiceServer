@@ -7,6 +7,8 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.h2.util.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -39,6 +41,8 @@ public class FileUploadController {
 	@Autowired
 	DieFactory dieFactory;
 
+	private static Logger logger = LogManager.getLogger(FileUploadController.class);
+
 	@RequestMapping("/cart")
 	public String cart(HttpSession session, Model model, @CookieValue(value = "diceServerSession", defaultValue = "NA") String cookie, HttpServletResponse response) {
 		// create cookie with session ID if there is no prior session. Otherwise, use
@@ -46,9 +50,9 @@ public class FileUploadController {
 		if (cookie == "NA")
 			response.addCookie(new Cookie("diceServerSession", session.getId()));
 		else {
-			System.out.println(session.getId());
+			logger.debug("sessionId: " + session.getId());
 			if (Application.dieOrderRepo.findFirstBySessionId(session.getId()) == null) {
-				System.out.println("No Cart Associated with sessionId");
+				logger.info("No Cart Associated with sessionId " + session.getId());
 				Application.dieOrderRepo.save(new DieOrder(session.getId()));
 			}
 			model.addAttribute("cart", Application.dieOrderRepo.findFirstBySessionId(session.getId()));
@@ -95,7 +99,7 @@ public class FileUploadController {
 		try {
 			die = dieFactory.createDieFromTemplate(IOUtils.readBytesAndClose(file.getInputStream(), MAX_FILE_SIZE_READ_BYTES));
 			Application.dieRepo.save(die);
-			System.out.println("Newly created dieId: " + die.id);
+			logger.info("Newly created dieId: " + die.id);
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		}
@@ -130,16 +134,15 @@ public class FileUploadController {
 	// Takes a single DieOrder Id and Stripe payment token.
 	@PostMapping("/pay")
 	public String pay(HttpSession session, @RequestParam Map<String, String> params) {
-		System.out.println(params.get("stripeShippingAddressLine1"));
 		DieOrder order = Application.dieOrderRepo.findAll().iterator().next();// Application.dieOrderRepo.findOne(Long.parseLong(params.get("dieOrderId")));
-		System.out.println("ORDER ID:" + params.get("dieOrderId") + " - #Jobs " + order.jobs.size() + " - Cost: " + order.getCost());
+		logger.info("Charging with the following order: " + "ORDER ID:" + params.get("dieOrderId") + " - #Jobs " + order.jobs.size() + " - Cost: " + order.getCost());
 		Charge charge = Utils.charge(params.get("stripeToken"), order);
 
 		return "/uploadForm";
 	}
 
 	@ExceptionHandler(StorageFileNotFoundException.class)
-	public ResponseEntity handleStorageFileNotFound(StorageFileNotFoundException exc) {
+	public ResponseEntity<Object> handleStorageFileNotFound(StorageFileNotFoundException exc) {
 		return ResponseEntity.notFound().build();
 	}
 
