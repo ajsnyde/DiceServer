@@ -94,7 +94,6 @@ public class FileUploadController {
 
 	@PostMapping("/Upload")
 	public String fileUploadToDie(@RequestParam("file") MultipartFile file, RedirectAttributes redirectAttributes) {
-
 		Die die = null;
 		try {
 			die = dieFactory.createDieFromTemplate(IOUtils.readBytesAndClose(file.getInputStream(), MAX_FILE_SIZE_READ_BYTES));
@@ -102,11 +101,6 @@ public class FileUploadController {
 			logger.info("Newly created dieId: " + die.id);
 		} catch (IOException e1) {
 			e1.printStackTrace();
-		}
-		try {
-			Thread.sleep(50);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
 		}
 		return "redirect:/viewDie/" + die.id;
 	}

@@ -1,7 +1,7 @@
 package dice;
 
-import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 
 import com.fasterxml.jackson.core.JsonGenerationException;
@@ -21,16 +21,17 @@ public class Fixture {
 	public Fixture() {
 
 	}
-
-	public Fixture(File file) {
-		loadPositions(file);
+	
+	public Fixture(String jsonFile) {
+		ClassLoader cl = Fixture.class.getClassLoader();
+		loadPositions(cl.getResourceAsStream(jsonFile));
 	}
 
-	public void loadPositions(File file) {
+	public void loadPositions(InputStream inputStream) {
 		try {
 			ObjectMapper mapper = new ObjectMapper();
 			// Convert JSON string from file to Object
-			positions = mapper.readValue(file, new TypeReference<ArrayList<Coord>>() {
+			positions = mapper.readValue(inputStream, new TypeReference<ArrayList<Coord>>() {
 			});
 		} catch (JsonGenerationException e) {
 			e.printStackTrace();

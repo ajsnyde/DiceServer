@@ -32,8 +32,14 @@ public class DieBatch {
 	@GeneratedValue(generator = "uuid-gen")
 	public String id;
 	
+	/*
+	 * A list of die Ids, in the order to be printed on the fixture.
+	 */
 	@Lob
 	public ArrayList<String> dice;
+	/*
+	 * One of each 6 sides of the batch, containing the compiled die faces in order on the particular fixture
+	 */
 	@JsonIgnore
 	@Transient
 	public ArrayList<Image> faces; // 6 compilations of each face of each die - each to be printed

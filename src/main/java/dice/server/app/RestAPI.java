@@ -1,5 +1,6 @@
 package dice.server.app;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.core.io.Resource;
@@ -92,8 +93,13 @@ public class RestAPI {
 	
 	@PostMapping("/dieBatch")
 	@ResponseBody
-	public ResponseEntity<Resource> serveImage(@RequestParam List<String> jobs,@RequestParam String fixture) {
-		DieBatch batch = new FixtureCompiler(FixtureType.ROWBYROWCELL).compile();
+	public ResponseEntity<Resource> serveDieBatch(@RequestParam List<String> jobs, @RequestParam String fixture) {
+		
+		// convert list of jobIds to dieJobs
+		ArrayList<DieJob> dieJobs = new ArrayList<DieJob>();
+		Application.dieJobRepo.findAll(jobs).iterator().forEachRemaining(dieJobs::add);
+		
+		DieBatch batch = new FixtureCompiler(FixtureType.valueOf(fixture)).compile(dieJobs);
 		Application.dieBatchRepo.save(batch);
 		return batch.zip("dieBatch" + batch.id + ".zip");
 	}

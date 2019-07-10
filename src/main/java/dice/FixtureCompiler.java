@@ -4,8 +4,9 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import dice.server.app.Application;
 import dice.server.app.Utils;
@@ -23,10 +24,10 @@ public class FixtureCompiler implements BatchCompilerStrategy {
 	public FixtureCompiler(FixtureType type) {
 		switch (type) {
 		case ROWBYROWCELL:
-			this.fixture = new Fixture(new File("fixture1.json"));
+			this.fixture = new Fixture("rowByRowCellGlobal.json");
 			break;
 		case ROWBYROWGLOBAL:
-			this.fixture = new Fixture(new File("fixture2.json"));
+			this.fixture = new Fixture("rowByRowGlobal.json");
 			break;
 		default:
 			throw new IllegalArgumentException("No such fixture type!");
@@ -34,6 +35,10 @@ public class FixtureCompiler implements BatchCompilerStrategy {
 		maxDice = fixture.getMaxDice();
 	}
 
+	/**
+	 * Create a DieBatch using the entire job pool, in order, until A) out of jobs, or B) out of space on the fixture
+	 * This method can use/leave partial jobs
+	 */
 	@Override
 	public DieBatch compile() {
 		DieBatch batch = new DieBatch();
@@ -54,6 +59,30 @@ public class FixtureCompiler implements BatchCompilerStrategy {
 				Application.dieJobRepo.save(job);
 			}
 		}
+		batch.faces = getImages(new ArrayList<String>(batch.dice));
+		return batch;
+	}
+	
+	/**
+	 * Create a DieBatch using the provided jobs, in order, until A) out of jobs, or B) out of space on the fixture
+	 * This method can use/leave partial jobs
+	 */
+	@Override
+	public DieBatch compile(List<DieJob> jobs) {
+		DieBatch batch = new DieBatch();
+		int numDice = 0;
+		// go through jobs until no more are available or maxDice is hit
+		for(DieJob job: jobs) {
+			int diceToAdd = Math.min(maxDice - numDice, job.quantityLeft);
+			if(diceToAdd == 0)
+				break;
+			
+			batch.dice.addAll(Collections.nCopies(diceToAdd, job.die.id));
+			numDice += diceToAdd;
+			job.quantityLeft -= diceToAdd;
+			Application.dieJobRepo.save(job);
+		}
+
 		batch.faces = getImages(new ArrayList<String>(batch.dice));
 		return batch;
 	}
