@@ -4,12 +4,13 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+
+import org.hibernate.annotations.GenericGenerator;
 
 import dice.server.store.OrderItem;
 
@@ -18,12 +19,17 @@ import dice.server.store.OrderItem;
 public class DieJob implements OrderItem {
 	@OneToOne(cascade = CascadeType.ALL)
 	public Die die;
+	
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	public long id;
+	@GenericGenerator(name = "uuid-gen", strategy = "uuid")
+	@GeneratedValue(generator = "uuid-gen")
+	public String id;
+	
 	public int quantity;
+	
 	@Column(name = "quantityLeft")
 	public int quantityLeft;
+	
 	public double cost;
 
 	@ManyToOne(cascade = CascadeType.ALL) // - deletes entire order...
@@ -53,11 +59,11 @@ public class DieJob implements OrderItem {
 		this.die = die;
 	}
 
-	public long getId() {
+	public String getId() {
 		return id;
 	}
 
-	public void setId(long id) {
+	public void setId(String id) {
 		this.id = id;
 	}
 

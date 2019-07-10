@@ -9,12 +9,12 @@ import java.util.zip.ZipOutputStream;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import org.hibernate.annotations.GenericGenerator;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -28,16 +28,18 @@ import dice.server.app.Utils;
 @Table(name = "diebatch")
 public class DieBatch {
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	public long id;
+	@GenericGenerator(name = "uuid-gen", strategy = "uuid")
+	@GeneratedValue(generator = "uuid-gen")
+	public String id;
+	
 	@Lob
-	public ArrayList<Long> dice;
+	public ArrayList<String> dice;
 	@JsonIgnore
 	@Transient
 	public ArrayList<Image> faces; // 6 compilations of each face of each die - each to be printed
 
 	public DieBatch() {
-		dice = new ArrayList<Long>();
+		dice = new ArrayList<String>();
 	}
 
 	public ResponseEntity<Resource> zip(String zipName) {

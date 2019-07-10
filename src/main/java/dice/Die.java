@@ -2,6 +2,7 @@ package dice;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -13,21 +14,34 @@ import javax.persistence.MapsId;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.GenericGenerator;
 
 @Entity
 @Table(name = "Die")
 public class Die {
 	static Die blank = null;
+
 	@Id
-	@GeneratedValue
-	public long id;
+	@GenericGenerator(name = "uuid-gen", strategy = "uuid")
+	@GeneratedValue(generator = "uuid-gen")
+	public String id;
+	
 	@OneToMany(cascade = CascadeType.ALL)
 	@ElementCollection(targetClass = DieFace.class)
 	private List<DieFace> faces = new ArrayList<DieFace>();
+	
 	@OneToOne(cascade = CascadeType.ALL)
 	@MapsId
 	private DieTemplate dieTemplate;
 
+	@CreationTimestamp
+	@Temporal(TemporalType.TIMESTAMP)
+    public Date createdDate;
+	
 	public static int innerSquare = 125;
 	public static int outerSquare = 157;
 

@@ -19,7 +19,7 @@ public class SimpleCompiler implements BatchCompilerStrategy {
 	@Override
 	public DieBatch compile() {
 		DieBatch batch = new DieBatch();
-		List<Long> batchDice = batch.dice;
+		List<String> batchDice = batch.dice;
 
 		// pool of diceJobs that aren't complete
 		ArrayList<DieJob> dieJobs = new ArrayList<DieJob>();
@@ -36,11 +36,11 @@ public class SimpleCompiler implements BatchCompilerStrategy {
 				Application.dieJobRepo.save(job);
 			}
 		}
-		batch.faces = getImages(new ArrayList<Long>(batch.dice));
+		batch.faces = getImages(new ArrayList<String>(batch.dice));
 		return batch;
 	}
 
-	private ArrayList<Image> getImages(ArrayList<Long> dice) {
+	private ArrayList<Image> getImages(ArrayList<String> dice) {
 		int rows = 5;
 		int cols = 5;
 		ArrayList<Image> images = new ArrayList<Image>();

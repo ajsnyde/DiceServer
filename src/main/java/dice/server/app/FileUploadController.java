@@ -87,7 +87,7 @@ public class FileUploadController {
 	}
 
 	@GetMapping("/dieOrder/{id}/removeJob/{id2}")
-	public String removeJob(@PathVariable long id, @PathVariable long id2) {
+	public String removeJob(@PathVariable String id, @PathVariable String id2) {
 		Application.dieOrderRepo.findOne(id).removeJob(id2);
 		return "redirect:/cart/";
 	}
@@ -112,7 +112,7 @@ public class FileUploadController {
 	}
 
 	@PostMapping("/Job")
-	public String createJob(HttpSession session, @RequestParam("redirect") String redirect, @RequestParam("dieId") long dieId, @RequestParam("quantity") int quantity,
+	public String createJob(HttpSession session, @RequestParam("redirect") String redirect, @RequestParam("dieId") String dieId, @RequestParam("quantity") int quantity,
 			@CookieValue(value = "diceServerSession", defaultValue = "NA") String cookie, HttpServletResponse response) {
 		Die die = Application.dieRepo.findOne(dieId);
 		if (die != null) {

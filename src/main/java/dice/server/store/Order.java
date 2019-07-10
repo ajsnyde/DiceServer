@@ -4,14 +4,17 @@ import java.sql.Time;
 
 import javax.persistence.CascadeType;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 
+import org.hibernate.annotations.GenericGenerator;
+
 public abstract class Order implements OrderItem {
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	public long id;
+	@GenericGenerator(name = "uuid-gen", strategy = "uuid")
+	@GeneratedValue(generator = "uuid-gen")
+	public String id;
+	
 	@ManyToOne(cascade = CascadeType.ALL)
 	public Customer customer;
 

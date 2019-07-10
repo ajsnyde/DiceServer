@@ -2,6 +2,7 @@ package dice;
 
 import java.sql.Time;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -11,12 +12,16 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.persistence.Transient;
+
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.GenericGenerator;
 
 import dice.server.app.Application;
 import dice.server.store.Order;
@@ -31,17 +36,25 @@ public class DieOrder extends Order implements OrderItem {
 	}
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	public long id;
+	@GenericGenerator(name = "uuid-gen", strategy = "uuid")
+	@GeneratedValue(generator = "uuid-gen")
+	public String id;
+	
 	@OneToMany(cascade = CascadeType.REMOVE)
 	@JoinColumn
 	public List<DieJob> jobs;
+	
 	public Time lastAccessed;
+	
 	@Enumerated(EnumType.STRING)
 	public Type type = Type.CART;
 
 	// SessionId associated with this order (cart)
 	private String sessionId;
+	
+	@CreationTimestamp
+	@Temporal(TemporalType.TIMESTAMP)
+    public Date createdDate;
 
 	public DieOrder() {
 		jobs = new ArrayList<DieJob>();
@@ -52,6 +65,7 @@ public class DieOrder extends Order implements OrderItem {
 		this.sessionId = session;
 	}
 
+	@Override
 	@Transient
 	public double getCost() {
 		return getJobs().stream().collect(Collectors.summingDouble(sc -> sc.getCost()));
@@ -65,13 +79,15 @@ public class DieOrder extends Order implements OrderItem {
 		this.sessionId = sessionId;
 	}
 
+
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	long getId() {
+	@GenericGenerator(name = "uuid-gen", strategy = "uuid")
+	@GeneratedValue(generator = "uuid-gen")
+	String getId() {
 		return id;
 	}
 
-	void setId(long id) {
+	void setId(String id) {
 		this.id = id;
 	}
 
@@ -85,8 +101,8 @@ public class DieOrder extends Order implements OrderItem {
 		this.jobs = jobs;
 	}
 
-	public void removeJob(long id) {
-		jobs.removeIf((DieJob j) -> j.id == id);
+	public void removeJob(String id) {
+		jobs.removeIf((DieJob j) -> j.id.equals(id));
 		Application.dieOrderRepo.save(this);
 	}
 }

@@ -37,7 +37,7 @@ public class FixtureCompiler implements BatchCompilerStrategy {
 	@Override
 	public DieBatch compile() {
 		DieBatch batch = new DieBatch();
-		ArrayList<Long> batchDice = batch.dice;
+		ArrayList<String> batchDice = batch.dice;
 
 		// pool of diceJobs that aren't complete
 		ArrayList<DieJob> dieJobs = new ArrayList<DieJob>();
@@ -54,11 +54,11 @@ public class FixtureCompiler implements BatchCompilerStrategy {
 				Application.dieJobRepo.save(job);
 			}
 		}
-		batch.faces = getImages(new ArrayList<Long>(batch.dice));
+		batch.faces = getImages(new ArrayList<String>(batch.dice));
 		return batch;
 	}
 
-	private ArrayList<Image> getImages(ArrayList<Long> dice) {
+	private ArrayList<Image> getImages(ArrayList<String> dice) {
 		ArrayList<Image> images = new ArrayList<Image>();
 
 		BufferedImage b_img = new BufferedImage(fixture.xSize, fixture.ySize, 1);

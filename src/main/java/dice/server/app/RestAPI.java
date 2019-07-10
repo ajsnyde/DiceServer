@@ -30,43 +30,43 @@ public class RestAPI {
 	}
 
 	@RequestMapping(value = "/die/{die:.+}", method = RequestMethod.GET, produces = "application/json")
-	public Die showDice(@PathVariable long die, Model model) {
+	public Die showDice(@PathVariable String die, Model model) {
 		return Application.dieRepo.findOne(die);
 	}
 
 	@GetMapping("/die/{id}/map")
 	@ResponseBody
-	public ResponseEntity<Resource> serveMap(@PathVariable long templateId) {
+	public ResponseEntity<Resource> serveMap(@PathVariable String templateId) {
 		return Utils.serveIMG("die" + templateId + "." + imgFormat, Application.storageService.get("templates/" + templateId + ".png"), imgFormat);
 	}
 
 	@GetMapping("/die/{id}/face/{faceId}/face")
 	@ResponseBody
-	public ResponseEntity<Resource> serveFace(@PathVariable long id, @PathVariable int faceId) {
+	public ResponseEntity<Resource> serveFace(@PathVariable String id, @PathVariable int faceId) {
 		Die die = Application.dieRepo.findOne(id);
 		DieFace face = die.getFace(faceId);
 		return Utils.serveIMG("die" + id + "face" + faceId + "." + imgFormat, Application.storageService.get("dieFaces/" + face.id + ".png"), imgFormat);
 	}
 
 	@RequestMapping(value = "/face/{faceId}", method = RequestMethod.GET, produces = "application/json")
-	public DieFace getFace(@PathVariable long faceId) {
+	public DieFace getFace(@PathVariable String faceId) {
 		return Application.dieFaceRepo.findOne(faceId);
 	}
 
 	@GetMapping("/face/{faceId}/face")
 	@ResponseBody
-	public ResponseEntity<Resource> serveFace(@PathVariable long faceId) {
+	public ResponseEntity<Resource> serveFace(@PathVariable String faceId) {
 		DieFace face = Application.dieFaceRepo.findOne(faceId);
 		return Utils.serveIMG("face" + faceId + "." + imgFormat, Application.storageService.get("dieFaces/" + face.id + ".png"), imgFormat);
 	}
 
 	@RequestMapping(value = "/diebatch/{id}", method = RequestMethod.GET, produces = "application/json")
-	public ResponseEntity<Resource> getBatch(@PathVariable long id) {
+	public ResponseEntity<Resource> getBatch(@PathVariable String id) {
 		return Application.dieBatchRepo.findOne(id).zip("batch" + id + ".zip");
 	}
 
 	@RequestMapping(value = "/diebatch/", method = RequestMethod.GET, produces = "application/json")
-	public Iterable<DieBatch> getBatches(@PathVariable long id) {
+	public Iterable<DieBatch> getBatches(@PathVariable String id) {
 		return Application.dieBatchRepo.findAll();
 	}
 
@@ -78,7 +78,7 @@ public class RestAPI {
 
 	@GetMapping("/dieJob/{id}/map")
 	@ResponseBody
-	public ResponseEntity<Resource> serveJobMap(@PathVariable long id) {
+	public ResponseEntity<Resource> serveJobMap(@PathVariable String id) {
 		return serveMap(Application.dieJobRepo.findOne(id).getDie().getDieTemplate().id);
 	}
 
