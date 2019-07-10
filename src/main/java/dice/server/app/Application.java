@@ -1,6 +1,8 @@
 package dice.server.app;
 
 import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.stream.StreamSupport;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -26,6 +28,7 @@ import dice.server.store.CustomerRepo;
 @SpringBootApplication
 @ComponentScan(basePackages = { "dice" })
 public class Application extends SpringBootServletInitializer {
+	
 	public static AWSFileSystemStorageService storageService;
 	public static DieRepo dieRepo;
 	public static DieTemplateRepo dieTemplateRepo;
@@ -73,5 +76,21 @@ public class Application extends SpringBootServletInitializer {
 	public void restartStorage() {
 		logger.info("DELETING all uploaded files");
 		storageService.deleteAll();
+	}
+	
+	@Scheduled(fixedDelay = 86400000) // Delete old database records and files every hour, for those older than an hour
+	public void deleteOldStuff() {
+		logger.info("DELETING old die objects");
+		StreamSupport.stream(dieRepo.findAll().spliterator(), true).filter(die-> die.createdDate.compareTo(new Date(new Date().getTime() - 86400000)) < 0).forEach(die ->
+		{
+			storageService.delete(die.getDieTemplate().id);
+			dieRepo.delete(die);
+			dieTemplateRepo.delete(die.getDieTemplate());
+		});
+		StreamSupport.stream(dieFaceRepo.findAll().spliterator(), true).filter(dieFace-> dieFace.createdDate.compareTo(new Date(new Date().getTime() - 86400000)) < 0).forEach(dieFace ->
+		{
+			storageService.delete(dieFace.id);
+			dieFaceRepo.delete(dieFace);
+		});
 	}
 }
