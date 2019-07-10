@@ -39,7 +39,7 @@ public class Application extends SpringBootServletInitializer {
 	public static CustomerRepo customerRepo;
 
 	private static Logger logger = LogManager.getLogger(Application.class);
-
+	
 	public static void main(String[] args) {
 		SpringApplication.run(Application.class, args);
 	}
@@ -83,13 +83,13 @@ public class Application extends SpringBootServletInitializer {
 		logger.info("DELETING old die objects");
 		StreamSupport.stream(dieRepo.findAll().spliterator(), true).filter(die-> die.createdDate.compareTo(new Date(new Date().getTime() - 86400000)) < 0).forEach(die ->
 		{
-			storageService.delete(die.getDieTemplate().id);
+			storageService.delete("templates/" + die.getDieTemplate().id);
 			dieRepo.delete(die);
 			dieTemplateRepo.delete(die.getDieTemplate());
 		});
 		StreamSupport.stream(dieFaceRepo.findAll().spliterator(), true).filter(dieFace-> dieFace.createdDate.compareTo(new Date(new Date().getTime() - 86400000)) < 0).forEach(dieFace ->
 		{
-			storageService.delete(dieFace.id);
+			storageService.delete("dieFaces/" + dieFace.id);
 			dieFaceRepo.delete(dieFace);
 		});
 	}
