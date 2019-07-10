@@ -36,7 +36,7 @@ public class DieOrder extends Order implements OrderItem {
 	}
 
 	@Id
-	@GenericGenerator(name = "uuid-gen", strategy = "uuid")
+	@GenericGenerator(name = "uuid-gen", strategy = "uuid2")
 	@GeneratedValue(generator = "uuid-gen")
 	public String id;
 	
@@ -81,7 +81,7 @@ public class DieOrder extends Order implements OrderItem {
 
 
 	@Id
-	@GenericGenerator(name = "uuid-gen", strategy = "uuid")
+	@GenericGenerator(name = "uuid-gen", strategy = "uuid2")
 	@GeneratedValue(generator = "uuid-gen")
 	String getId() {
 		return id;

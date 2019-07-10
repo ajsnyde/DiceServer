@@ -20,7 +20,7 @@ import dice.DieOrder;
 @Table(name = "customer")
 public class Customer extends com.stripe.model.Customer {
 	@Id
-	@GenericGenerator(name = "uuid-gen", strategy = "uuid")
+	@GenericGenerator(name = "uuid-gen", strategy = "uuid2")
 	@GeneratedValue(generator = "uuid-gen")
 	public String id;
 	

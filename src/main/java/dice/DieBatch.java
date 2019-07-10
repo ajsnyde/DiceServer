@@ -28,7 +28,7 @@ import dice.server.app.Utils;
 @Table(name = "diebatch")
 public class DieBatch {
 	@Id
-	@GenericGenerator(name = "uuid-gen", strategy = "uuid")
+	@GenericGenerator(name = "uuid-gen", strategy = "uuid2")
 	@GeneratedValue(generator = "uuid-gen")
 	public String id;
 	
