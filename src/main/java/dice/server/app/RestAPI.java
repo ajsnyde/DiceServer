@@ -1,5 +1,7 @@
 package dice.server.app;
 
+import java.util.List;
+
 import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
@@ -9,6 +11,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -89,7 +92,7 @@ public class RestAPI {
 	
 	@PostMapping("/dieBatch")
 	@ResponseBody
-	public ResponseEntity<Resource> serveImage() {
+	public ResponseEntity<Resource> serveImage(@RequestParam List<String> jobs,@RequestParam String fixture) {
 		DieBatch batch = new FixtureCompiler(FixtureType.ROWBYROWCELL).compile();
 		Application.dieBatchRepo.save(batch);
 		return batch.zip("dieBatch" + batch.id + ".zip");
