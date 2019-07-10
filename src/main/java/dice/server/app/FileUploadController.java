@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -107,7 +108,11 @@ public class FileUploadController {
 
 	@PostMapping("/Job")
 	public String createJob(HttpSession session, @RequestParam("redirect") String redirect, @RequestParam("dieId") String dieId, @RequestParam("quantity") int quantity,
-			@CookieValue(value = "diceServerSession", defaultValue = "NA") String cookie, HttpServletResponse response) {
+			@CookieValue(value = "diceServerSession", defaultValue = "NA") String cookie, HttpServletResponse response) throws BusinessLogicException {
+		
+		if(quantity > 288 || quantity < 16)
+			throw new BusinessLogicException("Quantity needs to be between 16 and 288 dice");
+		
 		Die die = Application.dieRepo.findOne(dieId);
 		if (die != null) {
 			DieJob job = new DieJob(die, quantity);
@@ -138,6 +143,12 @@ public class FileUploadController {
 	@ExceptionHandler(StorageFileNotFoundException.class)
 	public ResponseEntity<Object> handleStorageFileNotFound(StorageFileNotFoundException exc) {
 		return ResponseEntity.notFound().build();
+	}
+	
+	@ExceptionHandler(BusinessLogicException.class)
+	@ResponseBody 
+	public ResponseEntity<String> handleBusinessLogicException(BusinessLogicException exc) {
+		return ResponseEntity.badRequest().body(exc.getLocalizedMessage());
 	}
 
 	@GetMapping("/badSession")
