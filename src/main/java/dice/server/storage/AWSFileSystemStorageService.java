@@ -11,10 +11,13 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.h2.util.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.SdkClientException;
+import com.amazonaws.auth.AWSStaticCredentialsProvider;
+import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.GetBucketLocationRequest;
@@ -26,21 +29,19 @@ import com.amazonaws.services.s3.model.S3ObjectSummary;
 public class AWSFileSystemStorageService {
 
 	final AmazonS3 s3;
+
 	final String bucketName;
+
 	static final int MAX_FILE_SIZE_READ_BYTES = 1024 * 1024 * 10;
 
 	private static Logger logger = LogManager.getLogger(AWSFileSystemStorageService.class);
 
 	@Autowired
-	public AWSFileSystemStorageService() {
-		s3 = AmazonS3ClientBuilder.standard().withRegion(System.getenv("AWS_REGION")).build();
-		this.bucketName = System.getenv("AWS_BUCKET_NAME");
-		init();
-	}
-
-	public AWSFileSystemStorageService(String region, String bucketName) {
-		s3 = AmazonS3ClientBuilder.standard().withRegion(region).build();
+	public AWSFileSystemStorageService(@Value("${aws.accessKey}") String accessKey, @Value("${aws.secretKey}") String secretKey, @Value("${aws.region}") String region,
+			@Value("${aws.bucket.name}") String bucketName) {
 		this.bucketName = bucketName;
+		BasicAWSCredentials awsCreds = new BasicAWSCredentials(accessKey, secretKey);
+		s3 = AmazonS3ClientBuilder.standard().withCredentials(new AWSStaticCredentialsProvider(awsCreds)).withRegion(region).build();
 		init();
 	}
 
