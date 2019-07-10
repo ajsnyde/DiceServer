@@ -58,3 +58,4 @@ local.properties
 /*.bmp
 /target
 /logs/spring-boot-logger-log4j2.log
+/src/main/resources/application-dev.properties
